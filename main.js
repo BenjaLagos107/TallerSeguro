@@ -1,10 +1,13 @@
-import { supabase } from './supabaseClient.js';
+import { supabase, supabaseError } from './supabaseClient.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const statusText = document.getElementById('db-status');
     const spinner = document.getElementById('loading-spinner');
 
     try {
+        if (supabaseError) {
+            throw new Error(supabaseError);
+        }
         // Hacemos una consulta rápida a una tabla genérica o verificamos el estado
         // Supabase no tiene un "ping" directo, pero podemos hacer una consulta a una tabla inexistente
         // o usar auth para comprobar que el cliente responde.

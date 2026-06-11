@@ -4,5 +4,16 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// Inicializar el cliente de Supabase
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+let supabase = null;
+let supabaseError = null;
+
+try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+        throw new Error("Las variables VITE_SUPABASE_URL o VITE_SUPABASE_ANON_KEY no existen. Debes agregarlas en Vercel antes del deploy.");
+    }
+    supabase = createClient(supabaseUrl, supabaseAnonKey)
+} catch (error) {
+    supabaseError = error.message;
+}
+
+export { supabase, supabaseError }

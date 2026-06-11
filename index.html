@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TallerSeguro</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TallerSeguro</h1>
+            <p>Sistema de gestión y base de datos</p>
+        </header>
+
+        <main>
+            <div id="status-card" class="card">
+                <h2>Estado de Conexión</h2>
+                <p id="db-status">Verificando conexión a Supabase...</p>
+                <div id="loading-spinner" class="spinner"></div>
+            </div>
+
+            <div class="card">
+                <h2>Instrucciones</h2>
+                <p>Para conectar tu base de datos:</p>
+                <ol>
+                    <li>Abre el archivo <code>supabaseClient.js</code>.</li>
+                    <li>Reemplaza <code>TU_URL_DE_SUPABASE</code> con la URL de tu proyecto.</li>
+                    <li>Reemplaza <code>TU_ANON_KEY</code> con tu clave pública.</li>
+                    <li>Guarda el archivo y el servidor se recargará automáticamente.</li>
+                </ol>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>

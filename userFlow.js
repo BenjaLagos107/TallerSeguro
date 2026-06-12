@@ -85,7 +85,9 @@ export async function createReserva(userId, tallerId, formData) {
             vehiculo_id: vehiculoId,
             estado: 'Pendiente',
             fecha_ingreso: formData.date,
-            observaciones: formData.notes
+            observaciones: formData.notes,
+            servicio_solicitado: formData.servicio_solicitado,
+            precio_acordado: formData.precio_acordado
         }])
         .select()
         .single();

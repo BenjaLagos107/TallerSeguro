@@ -53,3 +53,24 @@ export async function updateOrderStatus(orderId, newStatus) {
     if (error) throw error;
     return data;
 }
+
+export async function getTallerServicios(tallerId) {
+    const { data, error } = await supabase
+        .from('taller_servicios')
+        .select('*')
+        .eq('taller_id', tallerId);
+    
+    if (error) throw error;
+    return data || [];
+}
+
+export async function addTallerServicio(payload) {
+    const { data, error } = await supabase
+        .from('taller_servicios')
+        .insert([payload])
+        .select()
+        .single();
+        
+    if (error) throw error;
+    return data;
+}

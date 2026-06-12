@@ -284,6 +284,9 @@
                 <input type="number" id="booking-km" placeholder="Kilometraje aproximado">
                 
                 <h4>Detalles de la Reserva</h4>
+                <select id="booking-servicio" required style="margin-bottom: 0.5rem;">
+                    <option value="">Cargando servicios...</option>
+                </select>
                 <input type="datetime-local" id="booking-date" required>
                 <textarea id="booking-notes" placeholder="Describe el problema o servicio que necesitas..." required></textarea>
                 <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
@@ -313,6 +316,36 @@
                 </div>
                 
                 <button type="submit" class="btn btn-primary">Registrar Taller</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE AGREGAR SERVICIO AL TALLER -->
+    <div id="modal-add-servicio" class="modal hidden">
+        <div class="modal-content card">
+            <span class="close-btn" id="close-add-servicio-modal">&times;</span>
+            <h2>Agregar Servicio Estandarizado</h2>
+            <form id="form-add-servicio">
+                <input type="hidden" id="add-servicio-taller-id">
+                
+                <h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Servicio</h4>
+                <select id="add-servicio-nombre" required style="margin-bottom: 1rem; width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    <option value="" disabled selected>Selecciona un servicio...</option>
+                    <option value="Mantención Básica (Aceite y Filtros)">Mantención Básica (Aceite y Filtros)</option>
+                    <option value="Frenos (Cambio de Pastillas)">Frenos (Cambio de Pastillas)</option>
+                    <option value="Alineación y Balanceo">Alineación y Balanceo</option>
+                    <option value="Diagnóstico Electrónico">Diagnóstico Electrónico</option>
+                    <option value="Revisión de Pre-compra">Revisión de Pre-compra</option>
+                    <option value="Reparación de Motor / Transmisión">Reparación de Motor / Transmisión</option>
+                </select>
+
+                <h4 style="margin-bottom: 0.5rem;">Precio Estimado (CLP)</h4>
+                <input type="number" id="add-servicio-precio" placeholder="Ej. 45000" required>
+                
+                <h4 style="margin-bottom: 0.5rem;">Tiempo Estimado</h4>
+                <input type="text" id="add-servicio-tiempo" placeholder="Ej. 2 horas" required>
+                
+                <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Guardar Servicio</button>
             </form>
         </div>
     </div>

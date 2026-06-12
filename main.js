@@ -1,7 +1,7 @@
 import { supabase, supabaseError } from './supabaseClient.js';
 import { getCurrentSession, signIn, signUp, signOut, getUserProfile } from './auth.js';
 import { getTalleres, getMisReservas, createReserva } from './userFlow.js';
-import { getMisTalleres, createTallerProfile, getTallerOrders, updateOrderStatus } from './ownerFlow.js';
+import { getMisTalleres, createTallerProfile, getTallerOrders, updateOrderStatus, getTallerServicios, addTallerServicio } from './ownerFlow.js';
 
 let currentUser = null;
 let currentRole = null; // 'user' or 'owner'
@@ -190,6 +190,9 @@ function setupEventListeners() {
             }
 
             const tallerId = document.getElementById('booking-taller-id').value;
+            const selectEl = document.getElementById('booking-servicio');
+            const selectedOption = selectEl.options[selectEl.selectedIndex];
+
             const formData = {
                 marca: document.getElementById('booking-marca').value,
                 modelo: document.getElementById('booking-modelo').value,
@@ -197,6 +200,8 @@ function setupEventListeners() {
                 km: document.getElementById('booking-km').value,
                 date: document.getElementById('booking-date').value,
                 notes: document.getElementById('booking-notes').value,
+                servicio_solicitado: selectEl.value || 'Servicio Personalizado',
+                precio_acordado: selectedOption && selectedOption.dataset.precio ? parseFloat(selectedOption.dataset.precio) : null
             };
 
             await createReserva(currentUser.id, tallerId, formData);
@@ -311,7 +316,7 @@ async function loadUserDashboard() {
     }
 }
 
-window.openBookingModal = (tallerId, tallerNombre) => {
+window.openBookingModal = async (tallerId, tallerNombre) => {
     document.getElementById('booking-taller-id').value = tallerId;
     document.getElementById('booking-taller-name').textContent = tallerNombre;
     
@@ -328,7 +333,30 @@ window.openBookingModal = (tallerId, tallerNombre) => {
         document.getElementById('booking-password').required = false;
     }
 
+    // Cargar servicios
+    const servicioSelect = document.getElementById('booking-servicio');
+    servicioSelect.innerHTML = '<option value="">Cargando servicios...</option>';
+    try {
+        const servicios = await getTallerServicios(tallerId);
+        if (servicios.length === 0) {
+            servicioSelect.innerHTML = '<option value="">Este taller no tiene servicios registrados</option>';
+            servicioSelect.required = false;
+        } else {
+            servicioSelect.innerHTML = '<option value="" disabled selected>Elige un servicio...</option>' + 
+                servicios.map(s => `<option value="${s.servicio_nombre}" data-precio="${s.precio}">${s.servicio_nombre} - $${s.precio} (aprox ${s.tiempo_estimado})</option>`).join('');
+            servicioSelect.required = true;
+        }
+    } catch (e) {
+        console.error(e);
+        servicioSelect.innerHTML = '<option value="">Error cargando servicios</option>';
+    }
+
     document.getElementById('booking-modal').classList.remove('hidden');
+};
+
+window.openAddServicioModal = (tallerId) => {
+    document.getElementById('add-servicio-taller-id').value = tallerId;
+    document.getElementById('modal-add-servicio').classList.remove('hidden');
 };
 
 // ==========================================
@@ -355,7 +383,7 @@ async function loadOwnerDashboard() {
         btnAddOrders.classList.add('hidden'); // Solo mostrarlo en el estado vacío en órdenes
 
         // 1. Renderizar Talleres en Mi Perfil
-        misTalleres.forEach(taller => {
+        for (const taller of misTalleres) {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
@@ -363,9 +391,26 @@ async function loadOwnerDashboard() {
                 <p class="text-muted">📍 ${taller.direccion}</p>
                 <p class="text-muted">📞 ${taller.telefono || 'Sin teléfono'}</p>
                 <p class="text-muted" style="margin-top: 0.5rem"><strong>Especialidades:</strong><br>${taller.especialidades || 'Ninguna especificada'}</p>
+                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                    <h5>Servicios Ofrecidos</h5>
+                    <ul id="lista-servicios-${taller.id}" style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; padding-left: 1.5rem;">
+                        <li>Cargando...</li>
+                    </ul>
+                    <button class="btn btn-secondary btn-small" onclick="openAddServicioModal('${taller.id}')">Agregar Servicio</button>
+                </div>
             `;
             profileList.appendChild(card);
-        });
+            
+            // Cargar servicios
+            getTallerServicios(taller.id).then(servicios => {
+                const ul = document.getElementById(`lista-servicios-${taller.id}`);
+                if (servicios.length === 0) {
+                    ul.innerHTML = '<li>Ningún servicio estandarizado agregado.</li>';
+                } else {
+                    ul.innerHTML = servicios.map(s => `<li>${s.servicio_nombre} - $${s.precio} (Aprox. ${s.tiempo_estimado})</li>`).join('');
+                }
+            }).catch(e => console.error(e));
+        }
 
         // 2. Renderizar Kanban por cada taller en Órdenes
         for (const taller of misTalleres) {
@@ -438,6 +483,8 @@ function renderKanbanBoard(boardElement, ordenes) {
         const rightDisabled = o.estado === 'Entregado' ? 'disabled' : '';
 
         card.innerHTML = `
+            <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem; margin-bottom: 0.25rem;">${o.servicio_solicitado || 'Servicio Personalizado'}</p>
+            <p style="margin-bottom: 0.5rem;"><strong>Precio:</strong> ${o.precio_acordado ? '$' + o.precio_acordado : 'A convenir'}</p>
             <p><strong>Auto:</strong> ${o.vehiculos?.marca} ${o.vehiculos?.modelo} (${o.vehiculos?.patente})</p>
             <p><strong>Cliente:</strong> ${o.vehiculos?.usuarios?.nombre || 'Desconocido'}</p>
             <p><strong>Fecha:</strong> ${new Date(o.fecha_ingreso).toLocaleString()}</p>

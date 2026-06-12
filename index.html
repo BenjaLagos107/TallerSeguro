@@ -252,7 +252,10 @@
             </div>
 
             <div id="tab-mi-auto" class="tab-content hidden">
-                <h3>Mis Vehículos Guardados</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>Mis Vehículos Guardados</h3>
+                    <button class="btn btn-primary btn-small" id="btn-open-add-vehiculo">+ Añadir Vehículo</button>
+                </div>
                 <div id="vehiculos-list" class="grid-list" style="margin-top: 1rem;">
                     <!-- Cards de vehiculos insertadas por JS -->
                     <p style="color: var(--text-muted);">Cargando vehículos...</p>
@@ -472,6 +475,21 @@
             <div id="resenas-list-container" style="margin-top: 1.5rem;">
                 <!-- Lista inyectada por JS -->
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA AGREGAR VEHICULO -->
+    <div id="modal-add-vehiculo" class="modal hidden">
+        <div class="modal-content card">
+            <span class="close-btn" id="close-add-vehiculo-modal">&times;</span>
+            <h2>Añadir Nuevo Vehículo</h2>
+            <form id="form-add-vehiculo">
+                <input type="text" id="add-vehiculo-marca" placeholder="Marca (ej. Toyota)" required>
+                <input type="text" id="add-vehiculo-modelo" placeholder="Modelo (ej. Yaris)" required>
+                <input type="text" id="add-vehiculo-patente" placeholder="Patente" required>
+                <input type="text" inputmode="numeric" id="add-vehiculo-km" placeholder="Kilometraje aproximado">
+                <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Guardar Vehículo</button>
+            </form>
         </div>
     </div>
 

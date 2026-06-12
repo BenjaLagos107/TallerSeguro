@@ -19,6 +19,23 @@ export async function getVehiculos(userId) {
     return data || [];
 }
 
+export async function addVehiculo(userId, formData) {
+    const { data, error } = await supabase
+        .from('vehiculos')
+        .insert([{
+            usuario_id: userId,
+            marca: formData.marca,
+            modelo: formData.modelo,
+            patente: formData.patente,
+            kilometraje: formData.kilometraje ? parseInt(formData.kilometraje, 10) : null
+        }])
+        .select()
+        .single();
+    
+    if (error) throw error;
+    return data;
+}
+
 export async function getMisReservas(userId) {
     if (!userId) return [];
     const { data, error } = await supabase

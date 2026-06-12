@@ -225,6 +225,60 @@ function setupEventListeners() {
             e.target.value = value;
         });
     }
+    
+    // Add Vehiculo Modal
+    const addVehiculoModal = document.getElementById('modal-add-vehiculo');
+    const btnOpenAddVehiculo = document.getElementById('btn-open-add-vehiculo');
+    const btnCloseAddVehiculo = document.getElementById('close-add-vehiculo-modal');
+    const formAddVehiculo = document.getElementById('form-add-vehiculo');
+
+    if (btnOpenAddVehiculo) {
+        btnOpenAddVehiculo.addEventListener('click', () => {
+            addVehiculoModal.classList.remove('hidden');
+        });
+    }
+
+    if (btnCloseAddVehiculo) {
+        btnCloseAddVehiculo.addEventListener('click', () => {
+            addVehiculoModal.classList.add('hidden');
+        });
+    }
+
+    if (formAddVehiculo) {
+        formAddVehiculo.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                marca: document.getElementById('add-vehiculo-marca').value,
+                modelo: document.getElementById('add-vehiculo-modelo').value,
+                patente: document.getElementById('add-vehiculo-patente').value,
+                kilometraje: document.getElementById('add-vehiculo-km').value.replace(/\D/g, '')
+            };
+            try {
+                // Importación dinámica porque addVehiculo está en userFlow.js
+                const { addVehiculo } = await import('./userFlow.js');
+                await addVehiculo(currentUser.id, formData);
+                showNotification("Vehículo guardado exitosamente", "success");
+                formAddVehiculo.reset();
+                addVehiculoModal.classList.add('hidden');
+                // Recargar el dashboard de cliente para actualizar la pestaña
+                await loadUserDashboard();
+            } catch (error) {
+                showNotification(error.message, "error");
+            }
+        });
+    }
+    
+    // Formateo de KM para el modal de añadir vehículo
+    const addVehiculoKm = document.getElementById('add-vehiculo-km');
+    if (addVehiculoKm) {
+        addVehiculoKm.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value !== '') {
+                value = parseInt(value, 10).toLocaleString('es-CL');
+            }
+            e.target.value = value;
+        });
+    }
 
     // Owner: Add Taller Modal
     const addTallerModal = document.getElementById('modal-add-taller');

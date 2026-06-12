@@ -350,11 +350,18 @@ input:focus, textarea:focus {
 
 /* NOTIFICATIONS */
 .notification {
-  padding: 1rem;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 1rem 2rem;
   border-radius: 0.5rem;
-  margin-bottom: 1rem;
   text-align: center;
   font-weight: 600;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  min-width: 300px;
 }
 .notif-success { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success); color: var(--success); }
 .notif-error { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--error); color: var(--error); }

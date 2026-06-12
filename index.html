@@ -8,6 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Notificaciones Globales -->
+    <div id="notification-banner" class="notification hidden"></div>
+
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo" id="nav-logo">TallerSeguro 🛡️</div>
@@ -22,9 +25,6 @@
     </nav>
 
     <div class="container">
-        <!-- Notificaciones -->
-        <div id="notification-banner" class="notification hidden"></div>
-
         <!-- 1. LANDING PAGE -->
         <section id="view-landing" class="view-section">
             <header class="hero">
@@ -114,6 +114,7 @@
                 <input type="password" id="auth-password" placeholder="Contraseña" required>
                 <!-- Solo para registro -->
                 <input type="text" id="auth-name" placeholder="Tu Nombre Completo" class="hidden">
+                <p id="auth-error" style="color: var(--error); text-align: center; font-size: 0.9rem; font-weight: 600;" class="hidden"></p>
                 <button type="submit" class="btn btn-primary" id="auth-submit-btn">Entrar</button>
             </form>
             <p class="auth-switch">

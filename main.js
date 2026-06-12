@@ -87,6 +87,8 @@ function setupEventListeners() {
         document.getElementById('auth-submit-btn').textContent = isLoginMode ? 'Entrar' : 'Registrarse';
         document.getElementById('auth-switch-text').textContent = isLoginMode ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?';
         document.getElementById('auth-switch-link').textContent = isLoginMode ? 'Regístrate aquí' : 'Inicia Sesión';
+        document.getElementById('auth-error').classList.add('hidden');
+        document.getElementById('auth-error').textContent = '';
         if (isLoginMode) {
             document.getElementById('auth-name').classList.add('hidden');
             document.getElementById('auth-name').removeAttribute('required');
@@ -102,6 +104,8 @@ function setupEventListeners() {
         const email = document.getElementById('auth-email').value;
         const password = document.getElementById('auth-password').value;
         const name = document.getElementById('auth-name').value;
+        const errorMsg = document.getElementById('auth-error');
+        errorMsg.classList.add('hidden');
         
         try {
             if (isLoginMode) {
@@ -119,6 +123,8 @@ function setupEventListeners() {
             else if (currentRole === 'owner') switchView('owner-dashboard');
 
         } catch (error) {
+            errorMsg.textContent = "Error: " + error.message;
+            errorMsg.classList.remove('hidden');
             showNotification(error.message, "error");
         }
     });

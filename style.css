@@ -654,6 +654,6 @@ input:focus, textarea:focus {
 
 /* FIX PARA SELECTS EN MODO OSCURO */
 select option {
-  background-color: var(--bg-color);
-  color: var(--text-light);
+  background-color: #ffffff;
+  color: #0f172a;
 }

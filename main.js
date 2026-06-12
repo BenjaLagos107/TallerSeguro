@@ -1,7 +1,7 @@
 import { supabase, supabaseError } from './supabaseClient.js';
 import { getCurrentSession, signIn, signUp, signOut, getUserProfile } from './auth.js';
 import { getTalleres, getMisReservas, createReserva } from './userFlow.js';
-import { getMiTaller, saveTallerProfile, getTallerOrders, updateOrderStatus } from './ownerFlow.js';
+import { getMisTalleres, createTallerProfile, getTallerOrders, updateOrderStatus } from './ownerFlow.js';
 
 let currentUser = null;
 let currentRole = null; // 'user' or 'owner'
@@ -199,19 +199,39 @@ function setupEventListeners() {
         }
     });
 
-    // Owner Profile Form
-    document.getElementById('form-taller-profile').addEventListener('submit', async (e) => {
+    // Owner: Add Taller Modal
+    const addTallerModal = document.getElementById('modal-add-taller');
+    document.getElementById('close-add-taller-modal').addEventListener('click', () => {
+        addTallerModal.classList.add('hidden');
+    });
+    
+    document.getElementById('btn-add-taller-from-profile').addEventListener('click', () => {
+        addTallerModal.classList.remove('hidden');
+    });
+    document.getElementById('btn-add-taller-from-orders').addEventListener('click', () => {
+        addTallerModal.classList.remove('hidden');
+    });
+
+    document.getElementById('form-add-taller').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Obtener checkboxes seleccionados
+        const checkboxes = document.querySelectorAll('input[name="especialidad"]:checked');
+        const especialidadesArray = Array.from(checkboxes).map(cb => cb.value);
+        const especialidadesText = especialidadesArray.join(', ');
+
         const formData = {
-            nombre: document.getElementById('taller-nombre').value,
-            direccion: document.getElementById('taller-direccion').value,
-            telefono: document.getElementById('taller-telefono').value,
-            especialidades: document.getElementById('taller-especialidades').value,
+            nombre: document.getElementById('add-taller-nombre').value,
+            direccion: document.getElementById('add-taller-direccion').value,
+            telefono: document.getElementById('add-taller-telefono').value,
+            especialidades: especialidadesText,
         };
         try {
-            await saveTallerProfile(currentUser.id, formData);
-            showNotification("Perfil de taller guardado", "success");
-            loadOwnerDashboard(); // Reload to fetch real id and orders
+            await createTallerProfile(currentUser.id, formData);
+            showNotification("Taller registrado exitosamente", "success");
+            document.getElementById('form-add-taller').reset();
+            addTallerModal.classList.add('hidden');
+            loadOwnerDashboard(); // Recargar la vista con el nuevo taller
         } catch (error) {
             showNotification(error.message, "error");
         }
@@ -303,42 +323,81 @@ window.openBookingModal = (tallerId, tallerNombre) => {
 // ==========================================
 async function loadOwnerDashboard() {
     try {
-        const miTaller = await getMiTaller(currentUser.id);
-        if (!miTaller) {
-            showNotification("Primero debes registrar tu taller en la pestaña 'Mi Perfil'.", "warning");
-            switchTab('tab-owner-profile');
+        const misTalleres = await getMisTalleres(currentUser.id);
+        const profileList = document.getElementById('owner-talleres-list');
+        const ordersContainer = document.getElementById('owner-orders-container');
+        const btnAddOrders = document.getElementById('btn-add-taller-from-orders');
+
+        profileList.innerHTML = '';
+        ordersContainer.innerHTML = '';
+
+        if (!misTalleres || misTalleres.length === 0) {
+            // Estado vacío general
+            profileList.innerHTML = '<p>No tienes ningún taller inscrito a tu nombre.</p>';
+            ordersContainer.innerHTML = '<p class="text-muted" style="padding: 2rem 0; text-align: center;">No tienes órdenes de trabajo porque no tienes talleres registrados.</p>';
+            btnAddOrders.classList.remove('hidden');
             return;
         }
 
-        // Llenar formulario si existe
-        document.getElementById('taller-nombre').value = miTaller.nombre;
-        document.getElementById('taller-direccion').value = miTaller.direccion;
-        document.getElementById('taller-telefono').value = miTaller.telefono || '';
-        document.getElementById('taller-especialidades').value = miTaller.especialidades || '';
+        btnAddOrders.classList.add('hidden'); // Solo mostrarlo en el estado vacío en órdenes
 
-        // Cargar Órdenes
-        const ordenes = await getTallerOrders(miTaller.id);
-        renderKanban(ordenes);
+        // 1. Renderizar Talleres en Mi Perfil
+        misTalleres.forEach(taller => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h4>${taller.nombre}</h4>
+                <p class="text-muted">📍 ${taller.direccion}</p>
+                <p class="text-muted">📞 ${taller.telefono || 'Sin teléfono'}</p>
+                <p class="text-muted" style="margin-top: 0.5rem"><strong>Especialidades:</strong><br>${taller.especialidades || 'Ninguna especificada'}</p>
+            `;
+            profileList.appendChild(card);
+        });
+
+        // 2. Renderizar Kanban por cada taller en Órdenes
+        for (const taller of misTalleres) {
+            const tallerSection = document.createElement('div');
+            tallerSection.style.marginBottom = '2rem';
+            tallerSection.innerHTML = `<h4 style="margin-bottom: 1rem; color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">Sucursal: ${taller.nombre}</h4>`;
+            
+            const kanbanBoard = document.createElement('div');
+            kanbanBoard.className = 'kanban-board';
+            kanbanBoard.id = `kanban-${taller.id}`;
+            tallerSection.appendChild(kanbanBoard);
+            ordersContainer.appendChild(tallerSection);
+
+            // Fetch órdenes para este taller
+            const ordenes = await getTallerOrders(taller.id);
+            renderKanbanBoard(kanbanBoard, ordenes);
+        }
 
     } catch (e) {
         console.error(e);
     }
 }
 
-function renderKanban(ordenes) {
-    const board = document.getElementById('owner-orders-board');
-    board.innerHTML = `
-        <div class="kanban-col" id="col-pendiente"><h4>Pendientes</h4></div>
-        <div class="kanban-col" id="col-revision"><h4>En Revisión</h4></div>
-        <div class="kanban-col" id="col-listo"><h4>Listo/Entregado</h4></div>
+function renderKanbanBoard(boardElement, ordenes) {
+    boardElement.innerHTML = `
+        <div class="kanban-col">
+            <h4>Pendientes</h4>
+            <div class="col-content pending-col"></div>
+        </div>
+        <div class="kanban-col">
+            <h4>En Revisión</h4>
+            <div class="col-content review-col"></div>
+        </div>
+        <div class="kanban-col">
+            <h4>Listo/Entregado</h4>
+            <div class="col-content ready-col"></div>
+        </div>
     `;
 
-    const colPendiente = document.getElementById('col-pendiente');
-    const colRevision = document.getElementById('col-revision');
-    const colListo = document.getElementById('col-listo');
+    const colPendiente = boardElement.querySelector('.pending-col');
+    const colRevision = boardElement.querySelector('.review-col');
+    const colListo = boardElement.querySelector('.ready-col');
 
     if(ordenes.length === 0) {
-        colPendiente.innerHTML += '<p style="text-align:center;color:var(--text-muted)">Vacío</p>';
+        colPendiente.innerHTML = '<p style="text-align:center;color:var(--text-muted); font-size: 0.9rem;">Sin órdenes</p>';
     }
 
     ordenes.forEach(o => {
@@ -352,7 +411,7 @@ function renderKanban(ordenes) {
             <hr style="border-color:rgba(255,255,255,0.1); margin:0.5rem 0;">
             <p class="text-muted" style="font-size:0.9rem">${o.observaciones}</p>
             <div style="margin-top:1rem; display:flex; gap:0.5rem;">
-                <select class="btn btn-secondary btn-small" onchange="changeOrderStatus('${o.id}', this.value)">
+                <select class="btn btn-secondary btn-small" onchange="changeOrderStatus('${o.id}', this.value)" style="width: 100%;">
                     <option value="Pendiente" ${o.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
                     <option value="En Revisión" ${o.estado === 'En Revisión' ? 'selected' : ''}>En Revisión</option>
                     <option value="Listo" ${o.estado === 'Listo' ? 'selected' : ''}>Listo</option>

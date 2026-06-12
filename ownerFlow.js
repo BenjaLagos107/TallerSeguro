@@ -1,20 +1,17 @@
 import { supabase } from './supabaseClient.js';
 
-export async function getMiTaller(userId) {
+export async function getMisTalleres(userId) {
     const { data, error } = await supabase
         .from('talleres')
         .select('*')
         .eq('dueno_id', userId)
-        .maybeSingle(); // Un usuario puede no tener taller registrado aún
+        .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return data;
+    return data || [];
 }
 
-export async function saveTallerProfile(userId, formData) {
-    // Buscar si ya existe
-    const existente = await getMiTaller(userId);
-
+export async function createTallerProfile(userId, formData) {
     const payload = {
         dueno_id: userId,
         nombre: formData.nombre,
@@ -23,28 +20,14 @@ export async function saveTallerProfile(userId, formData) {
         especialidades: formData.especialidades
     };
 
-    let result;
-    if (existente) {
-        // Update
-        const { data, error } = await supabase
-            .from('talleres')
-            .update(payload)
-            .eq('id', existente.id)
-            .select()
-            .single();
-        if (error) throw error;
-        result = data;
-    } else {
-        // Insert
-        const { data, error } = await supabase
-            .from('talleres')
-            .insert([payload])
-            .select()
-            .single();
-        if (error) throw error;
-        result = data;
-    }
-    return result;
+    const { data, error } = await supabase
+        .from('talleres')
+        .insert([payload])
+        .select()
+        .single();
+        
+    if (error) throw error;
+    return data;
 }
 
 export async function getTallerOrders(tallerId) {

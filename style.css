@@ -243,6 +243,12 @@ body {
   text-align: center;
 }
 
+.col-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 /* FORMS */
 form {
   display: flex;

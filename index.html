@@ -83,22 +83,22 @@
             </div>
 
             <div id="tab-owner-orders" class="tab-content active">
-                <h3>Gestión de Órdenes</h3>
-                <div class="kanban-board" id="owner-orders-board">
-                    <!-- Columnas de Kanban (Pendiente, En Revisión, Listo) insertadas por JS -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>Gestión de Órdenes</h3>
+                    <button id="btn-add-taller-from-orders" class="btn btn-primary hidden">Inscribir Taller</button>
+                </div>
+                <div id="owner-orders-container">
+                    <!-- Aquí se insertarán los tableros Kanban por taller -->
                 </div>
             </div>
 
             <div id="tab-owner-profile" class="tab-content hidden">
-                <div class="card">
-                    <h3>Configuración de mi Taller</h3>
-                    <form id="form-taller-profile">
-                        <input type="text" id="taller-nombre" placeholder="Nombre del Taller" required>
-                        <input type="text" id="taller-direccion" placeholder="Dirección" required>
-                        <input type="text" id="taller-telefono" placeholder="Teléfono">
-                        <textarea id="taller-especialidades" placeholder="Especialidades (ej. Frenos, Suspensión)"></textarea>
-                        <button type="submit" class="btn btn-primary">Guardar Perfil</button>
-                    </form>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>Mis Talleres</h3>
+                    <button id="btn-add-taller-from-profile" class="btn btn-primary">Inscribir Nuevo Taller</button>
+                </div>
+                <div id="owner-talleres-list" class="grid-list">
+                    <!-- Cards de talleres inscritos insertadas por JS -->
                 </div>
             </div>
         </section>
@@ -149,6 +149,32 @@
                 <input type="datetime-local" id="booking-date" required>
                 <textarea id="booking-notes" placeholder="Describe el problema o servicio que necesitas..." required></textarea>
                 <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE INSCRIPCIÓN DE TALLER -->
+    <div id="modal-add-taller" class="modal hidden">
+        <div class="modal-content card">
+            <span class="close-btn" id="close-add-taller-modal">&times;</span>
+            <h2>Inscribir Nuevo Taller</h2>
+            <form id="form-add-taller">
+                <input type="text" id="add-taller-nombre" placeholder="Nombre del Taller" required>
+                <input type="text" id="add-taller-direccion" placeholder="Dirección (ej. Av. Providencia 1234)" required>
+                <input type="text" id="add-taller-telefono" placeholder="Teléfono de contacto">
+                
+                <h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Especialidades</h4>
+                <div class="checkbox-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                    <label><input type="checkbox" name="especialidad" value="Mecánica General"> Mecánica General</label>
+                    <label><input type="checkbox" name="especialidad" value="Frenos"> Frenos</label>
+                    <label><input type="checkbox" name="especialidad" value="Suspensión y Dirección"> Suspensión y Dir.</label>
+                    <label><input type="checkbox" name="especialidad" value="Electromecánica"> Electromecánica</label>
+                    <label><input type="checkbox" name="especialidad" value="Desabolladura y Pintura"> Desab. y Pintura</label>
+                    <label><input type="checkbox" name="especialidad" value="Transmisión"> Transmisión</label>
+                    <label><input type="checkbox" name="especialidad" value="Cambio de Aceite y Filtros"> Aceite y Filtros</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Registrar Taller</button>
             </form>
         </div>
     </div>

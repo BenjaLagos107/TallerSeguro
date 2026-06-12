@@ -51,6 +51,7 @@ function switchView(viewName) {
     if (viewName === 'user-dashboard') loadUserDashboard();
     if (viewName === 'owner-dashboard') loadOwnerDashboard();
 }
+window.switchView = switchView;
 
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));

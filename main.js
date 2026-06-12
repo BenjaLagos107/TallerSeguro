@@ -136,13 +136,23 @@ function setupEventListeners() {
         await checkSession();
     });
 
-    // Landing Roles
-    document.getElementById('btn-role-user').addEventListener('click', () => {
+    // Landing Roles Redesign
+    document.getElementById('btn-quiero-probarlo').addEventListener('click', () => {
         currentRole = 'user';
         switchView('user-dashboard');
     });
 
-    document.getElementById('btn-role-owner').addEventListener('click', () => {
+    document.getElementById('btn-probar-piloto').addEventListener('click', () => {
+        currentRole = 'user';
+        switchView('user-dashboard');
+    });
+
+    document.getElementById('btn-probar-ia').addEventListener('click', () => {
+        showNotification("El asistente de IA estará disponible próximamente.", "warning");
+    });
+
+    document.getElementById('btn-role-owner-nav').addEventListener('click', (e) => {
+        e.preventDefault();
         currentRole = 'owner';
         if (currentUser) switchView('owner-dashboard');
         else document.getElementById('btn-show-login').click();

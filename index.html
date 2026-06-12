@@ -13,9 +13,19 @@
 
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo" id="nav-logo">TallerSeguro 🛡️</div>
+            <div class="logo" id="nav-logo" style="color: #10b981;">Confiauto</div>
+            
+            <div class="nav-links hidden-mobile">
+                <a href="#">Cómo funciona</a>
+                <a href="#">Comparar</a>
+                <a href="#">Asistente IA</a>
+            </div>
+
             <div class="auth-controls" id="auth-controls">
-                <button id="btn-show-login" class="btn btn-secondary">Iniciar Sesión</button>
+                <a href="#" id="btn-role-owner-nav" class="nav-link-subtle">Soy Taller</a>
+                <a href="#" id="btn-show-login" class="nav-link-subtle">Iniciar Sesión</a>
+                <button id="btn-quiero-probarlo" class="btn btn-primary">Quiero probarlo</button>
+                
                 <div id="user-info" class="hidden">
                     <span id="user-email"></span>
                     <button id="btn-logout" class="btn btn-secondary">Cerrar Sesión</button>
@@ -26,22 +36,31 @@
 
     <div class="container">
         <!-- 1. LANDING PAGE -->
-        <section id="view-landing" class="view-section">
-            <header class="hero">
-                <h1>Tu vehículo en las mejores manos</h1>
-                <p>Encuentra el taller ideal, reserva tu cita y haz seguimiento en vivo. O registra tu taller y gestiona todos tus clientes.</p>
-            </header>
-            
-            <div class="role-selector">
-                <div class="card role-card" id="card-user-role">
-                    <h2>🚗 Soy Cliente</h2>
-                    <p>Busco un taller de confianza para reparar o mantener mi vehículo.</p>
-                    <button class="btn btn-primary" id="btn-role-user">Buscar Talleres</button>
+        <section id="view-landing" class="view-section landing-redesign">
+            <div class="hero-content">
+                <span class="badge-pill">🚗 Piloto en Santiago · Talleres verificados</span>
+                
+                <h1>Encuentra el taller correcto, sin miedo a que te vean la cara.</h1>
+                <p class="hero-subtitle">Compara talleres cercanos por <strong>precio referencial, tiempo y reseñas verificadas</strong>. Sigue tu auto en tiempo real y resuelve dudas con un asistente que traduce el "lenguaje mecánico".</p>
+                
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-large" id="btn-probar-piloto">Probar gratis el piloto</button>
+                    <button class="btn btn-secondary btn-large" id="btn-probar-ia">Probar asistente IA &rarr;</button>
                 </div>
-                <div class="card role-card" id="card-owner-role">
-                    <h2>🔧 Soy Taller</h2>
-                    <p>Quiero registrar mi taller, recibir reservas y gestionar mis órdenes de trabajo.</p>
-                    <button class="btn btn-primary" id="btn-role-owner">Acceder como Taller</button>
+                
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <h3>5,5M</h3>
+                        <p>autos livianos en Chile</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>7 de 10</h3>
+                        <p>salen del taller oficial tras 60.000 km</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>15/20</h3>
+                        <p>entrevistados sufren falta de transparencia</p>
+                    </div>
                 </div>
             </div>
         </section>

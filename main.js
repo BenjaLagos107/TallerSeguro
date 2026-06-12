@@ -198,7 +198,7 @@ function setupEventListeners() {
                 marca: document.getElementById('booking-marca').value,
                 modelo: document.getElementById('booking-modelo').value,
                 patente: document.getElementById('booking-patente').value,
-                km: document.getElementById('booking-km').value,
+                km: document.getElementById('booking-km').value.replace(/\D/g, ''),
                 date: document.getElementById('booking-date').value,
                 notes: document.getElementById('booking-notes').value,
                 servicio_solicitado: selectEl.value || 'Servicio Personalizado',
@@ -215,6 +215,17 @@ function setupEventListeners() {
             showNotification(error.message, "error");
         }
     });
+
+    const bookingKm = document.getElementById('booking-km');
+    if (bookingKm) {
+        bookingKm.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value !== '') {
+                value = parseInt(value, 10).toLocaleString('es-CL');
+            }
+            e.target.value = value;
+        });
+    }
 
     // Owner: Add Taller Modal
     const addTallerModal = document.getElementById('modal-add-taller');

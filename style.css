@@ -567,6 +567,8 @@ input:focus, textarea:focus {
 .modal-content {
   width: 100%;
   max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
 }
 

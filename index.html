@@ -5,32 +5,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TallerSeguro</title>
     <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" id="nav-logo">TallerSeguro 🛡️</div>
+            <div class="auth-controls" id="auth-controls">
+                <button id="btn-show-login" class="btn btn-secondary">Iniciar Sesión</button>
+                <div id="user-info" class="hidden">
+                    <span id="user-email"></span>
+                    <button id="btn-logout" class="btn btn-secondary">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <header>
-            <h1>TallerSeguro</h1>
-            <p>Sistema de gestión y base de datos</p>
-        </header>
+        <!-- Notificaciones -->
+        <div id="notification-banner" class="notification hidden"></div>
 
-        <main>
-            <div id="status-card" class="card">
-                <h2>Estado de Conexión</h2>
-                <p id="db-status">Verificando conexión a Supabase...</p>
-                <div id="loading-spinner" class="spinner"></div>
+        <!-- 1. LANDING PAGE -->
+        <section id="view-landing" class="view-section">
+            <header class="hero">
+                <h1>Tu vehículo en las mejores manos</h1>
+                <p>Encuentra el taller ideal, reserva tu cita y haz seguimiento en vivo. O registra tu taller y gestiona todos tus clientes.</p>
+            </header>
+            
+            <div class="role-selector">
+                <div class="card role-card" id="card-user-role">
+                    <h2>🚗 Soy Cliente</h2>
+                    <p>Busco un taller de confianza para reparar o mantener mi vehículo.</p>
+                    <button class="btn btn-primary" id="btn-role-user">Buscar Talleres</button>
+                </div>
+                <div class="card role-card" id="card-owner-role">
+                    <h2>🔧 Soy Taller</h2>
+                    <p>Quiero registrar mi taller, recibir reservas y gestionar mis órdenes de trabajo.</p>
+                    <button class="btn btn-primary" id="btn-role-owner">Acceder como Taller</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. PANEL DEL CLIENTE (USUARIO FINAL) -->
+        <section id="view-user-dashboard" class="view-section hidden">
+            <div class="dashboard-header">
+                <h2>Panel de Cliente</h2>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="tab-talleres">Buscar Talleres</button>
+                    <button class="tab-btn" data-tab="tab-mis-reservas">Mis Reservas</button>
+                </div>
             </div>
 
-            <div class="card">
-                <h2>Instrucciones</h2>
-                <p>Para conectar tu base de datos:</p>
-                <ol>
-                    <li>Abre el archivo <code>supabaseClient.js</code>.</li>
-                    <li>Reemplaza <code>TU_URL_DE_SUPABASE</code> con la URL de tu proyecto.</li>
-                    <li>Reemplaza <code>TU_ANON_KEY</code> con tu clave pública.</li>
-                    <li>Guarda el archivo y el servidor se recargará automáticamente.</li>
-                </ol>
+            <div id="tab-talleres" class="tab-content active">
+                <h3>Talleres Disponibles</h3>
+                <div id="talleres-list" class="grid-list">
+                    <!-- Cards de talleres insertadas por JS -->
+                    <div class="spinner" id="spinner-talleres"></div>
+                </div>
             </div>
-        </main>
+
+            <div id="tab-mis-reservas" class="tab-content hidden">
+                <h3>Mis Reservas y Órdenes Activas</h3>
+                <div id="reservas-list" class="grid-list">
+                    <!-- Cards de reservas insertadas por JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PANEL DEL DUEÑO DE TALLER -->
+        <section id="view-owner-dashboard" class="view-section hidden">
+            <div class="dashboard-header">
+                <h2>Panel de Taller</h2>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="tab-owner-orders">Órdenes de Trabajo</button>
+                    <button class="tab-btn" data-tab="tab-owner-profile">Mi Perfil / Taller</button>
+                </div>
+            </div>
+
+            <div id="tab-owner-orders" class="tab-content active">
+                <h3>Gestión de Órdenes</h3>
+                <div class="kanban-board" id="owner-orders-board">
+                    <!-- Columnas de Kanban (Pendiente, En Revisión, Listo) insertadas por JS -->
+                </div>
+            </div>
+
+            <div id="tab-owner-profile" class="tab-content hidden">
+                <div class="card">
+                    <h3>Configuración de mi Taller</h3>
+                    <form id="form-taller-profile">
+                        <input type="text" id="taller-nombre" placeholder="Nombre del Taller" required>
+                        <input type="text" id="taller-direccion" placeholder="Dirección" required>
+                        <input type="text" id="taller-telefono" placeholder="Teléfono">
+                        <textarea id="taller-especialidades" placeholder="Especialidades (ej. Frenos, Suspensión)"></textarea>
+                        <button type="submit" class="btn btn-primary">Guardar Perfil</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAL DE AUTENTICACIÓN -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content card">
+            <span class="close-btn" id="close-auth-modal">&times;</span>
+            <h2 id="auth-title">Iniciar Sesión</h2>
+            <form id="auth-form">
+                <input type="email" id="auth-email" placeholder="Correo electrónico" required>
+                <input type="password" id="auth-password" placeholder="Contraseña" required>
+                <!-- Solo para registro -->
+                <input type="text" id="auth-name" placeholder="Tu Nombre Completo" class="hidden">
+                <button type="submit" class="btn btn-primary" id="auth-submit-btn">Entrar</button>
+            </form>
+            <p class="auth-switch">
+                <span id="auth-switch-text">¿No tienes cuenta?</span> 
+                <a href="#" id="auth-switch-link">Regístrate aquí</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- MODAL DE RESERVA (Para clientes) -->
+    <div id="booking-modal" class="modal hidden">
+        <div class="modal-content card">
+            <span class="close-btn" id="close-booking-modal">&times;</span>
+            <h2>Reservar Cita en <span id="booking-taller-name"></span></h2>
+            <form id="booking-form">
+                <input type="hidden" id="booking-taller-id">
+                <h4>Datos de tu Vehículo</h4>
+                <input type="text" id="booking-marca" placeholder="Marca (ej. Toyota)" required>
+                <input type="text" id="booking-modelo" placeholder="Modelo (ej. Yaris)" required>
+                <input type="text" id="booking-patente" placeholder="Patente" required>
+                <input type="number" id="booking-km" placeholder="Kilometraje aproximado">
+                
+                <h4>Detalles de la Reserva</h4>
+                <input type="datetime-local" id="booking-date" required>
+                <textarea id="booking-notes" placeholder="Describe el problema o servicio que necesitas..." required></textarea>
+                <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+            </form>
+        </div>
     </div>
 
     <script type="module" src="./main.js"></script>

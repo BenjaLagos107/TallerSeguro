@@ -239,6 +239,7 @@ function setupEventListeners() {
         const formData = {
             nombre: document.getElementById('add-taller-nombre').value,
             direccion: document.getElementById('add-taller-direccion').value,
+            sector: document.getElementById('add-taller-sector').value,
             telefono: document.getElementById('add-taller-telefono').value,
             especialidades: especialidadesText,
         };
@@ -282,6 +283,11 @@ function setupEventListeners() {
             document.getElementById('modal-add-servicio').classList.add('hidden');
         });
     }
+
+    const filterSector = document.getElementById('filter-sector');
+    if (filterSector) {
+        filterSector.addEventListener('change', loadUserDashboard);
+    }
 }
 
 // ==========================================
@@ -290,18 +296,23 @@ function setupEventListeners() {
 async function loadUserDashboard() {
     // Cargar Talleres
     try {
-        const talleres = await getTalleres();
+        let talleres = await getTalleres();
+        const filterEl = document.getElementById('filter-sector');
+        if (filterEl && filterEl.value) {
+            talleres = talleres.filter(t => t.sector === filterEl.value);
+        }
+
         const grid = document.getElementById('talleres-list');
         grid.innerHTML = '';
         if (talleres.length === 0) {
-            grid.innerHTML = '<p>No hay talleres registrados aún.</p>';
+            grid.innerHTML = '<p>No hay talleres disponibles con estos filtros.</p>';
         } else {
             talleres.forEach(t => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
                     <h4>${t.nombre}</h4>
-                    <p class="text-muted">📍 ${t.direccion}</p>
+                    <p class="text-muted">📍 ${t.direccion} (${t.sector || 'Sin sector especificado'})</p>
                     <p class="text-muted">🔧 ${t.especialidades || 'General'}</p>
                     <button class="btn btn-primary" style="margin-top:1rem; width:100%" onclick="openBookingModal('${t.id}', '${t.nombre}')">Reservar Hora</button>
                 `;

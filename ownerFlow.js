@@ -15,6 +15,7 @@ export async function createTallerProfile(userId, formData) {
         dueno_id: userId,
         nombre: formData.nombre,
         direccion: formData.direccion,
+        sector: formData.sector,
         telefono: formData.telefono,
         especialidades: formData.especialidades
     };

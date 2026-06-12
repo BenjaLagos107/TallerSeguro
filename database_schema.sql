@@ -15,7 +15,7 @@ CREATE TABLE public.usuarios (
 -- 2. Tabla de Talleres
 CREATE TABLE public.talleres (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    dueño_id UUID NOT NULL REFERENCES public.usuarios(id) ON DELETE CASCADE,
+    dueno_id UUID NOT NULL REFERENCES public.usuarios(id) ON DELETE CASCADE,
     nombre TEXT NOT NULL,
     direccion TEXT NOT NULL,
     latitud NUMERIC,

@@ -4,7 +4,7 @@ export async function getMiTaller(userId) {
     const { data, error } = await supabase
         .from('talleres')
         .select('*')
-        .eq('dueño_id', userId)
+        .eq('dueno_id', userId)
         .maybeSingle(); // Un usuario puede no tener taller registrado aún
     
     if (error) throw error;
@@ -16,7 +16,7 @@ export async function saveTallerProfile(userId, formData) {
     const existente = await getMiTaller(userId);
 
     const payload = {
-        dueño_id: userId,
+        dueno_id: userId,
         nombre: formData.nombre,
         direccion: formData.direccion,
         telefono: formData.telefono,

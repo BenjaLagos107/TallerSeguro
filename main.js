@@ -493,7 +493,7 @@ window.openViewResenasModal = (tallerId, tallerNombre) => {
             div.innerHTML = `
                 <p><strong>${r.usuarios?.nombre || 'Anónimo'}</strong> - <span style="color: #fbbf24;">⭐ ${r.calificacion}</span></p>
                 <p class="text-muted" style="margin-top: 0.5rem; font-size: 0.95rem;">"${r.comentario || ''}"</p>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">${new Date(r.created_at).toLocaleDateString()}</p>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'Recientemente'}</p>
             `;
             container.appendChild(div);
         });

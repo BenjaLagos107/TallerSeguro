@@ -350,8 +350,10 @@ input:focus, textarea:focus {
   text-transform: uppercase;
 }
 
+.status-error { background: rgba(239, 68, 68, 0.2); color: var(--error); border: 1px solid var(--error); }
 .status-pendiente { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
-.status-revision { background: rgba(59, 130, 246, 0.2); color: var(--primary-color); border: 1px solid var(--primary-color); }
+.status-primary { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #60a5fa; }
+.status-revision { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid #a78bfa; }
 .status-listo { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
 
 /* NOTIFICATIONS */

@@ -278,8 +278,10 @@ async function loadUserDashboard() {
                 const card = document.createElement('div');
                 card.className = 'card';
                 let statusClass = 'status-pendiente';
-                if (r.estado.toLowerCase().includes('revis')) statusClass = 'status-revision';
-                if (r.estado.toLowerCase().includes('listo') || r.estado.toLowerCase().includes('entreg')) statusClass = 'status-listo';
+                if (r.estado === 'Cancelado') statusClass = 'status-error';
+                else if (r.estado === 'Aceptado') statusClass = 'status-primary';
+                else if (r.estado === 'En Revisión') statusClass = 'status-revision';
+                else if (r.estado === 'Terminado' || r.estado === 'Entregado') statusClass = 'status-listo';
                 
                 card.innerHTML = `
                     <h4>Taller: ${r.talleres ? r.talleres.nombre : 'Desconocido'}</h4>
@@ -380,56 +382,95 @@ async function loadOwnerDashboard() {
 function renderKanbanBoard(boardElement, ordenes) {
     boardElement.innerHTML = `
         <div class="kanban-col">
-            <h4>Pendientes</h4>
+            <h4>Pendiente</h4>
             <div class="col-content pending-col"></div>
+        </div>
+        <div class="kanban-col">
+            <h4>Aceptado</h4>
+            <div class="col-content accepted-col"></div>
         </div>
         <div class="kanban-col">
             <h4>En Revisión</h4>
             <div class="col-content review-col"></div>
         </div>
         <div class="kanban-col">
-            <h4>Listo/Entregado</h4>
-            <div class="col-content ready-col"></div>
+            <h4>Terminado</h4>
+            <div class="col-content finished-col"></div>
+        </div>
+        <div class="kanban-col">
+            <h4>Entregado</h4>
+            <div class="col-content delivered-col"></div>
         </div>
     `;
 
-    const colPendiente = boardElement.querySelector('.pending-col');
-    const colRevision = boardElement.querySelector('.review-col');
-    const colListo = boardElement.querySelector('.ready-col');
+    const cols = {
+        'Pendiente': boardElement.querySelector('.pending-col'),
+        'Aceptado': boardElement.querySelector('.accepted-col'),
+        'En Revisión': boardElement.querySelector('.review-col'),
+        'Terminado': boardElement.querySelector('.finished-col'),
+        'Entregado': boardElement.querySelector('.delivered-col'),
+    };
 
-    if(ordenes.length === 0) {
-        colPendiente.innerHTML = '<p style="text-align:center;color:var(--text-muted); font-size: 0.9rem;">Sin órdenes</p>';
-    }
+    // Mensaje de vacío
+    let hasActiveOrders = false;
 
     ordenes.forEach(o => {
+        if (o.estado === 'Cancelado') return; // Ocultar canceladas del Kanban
+        hasActiveOrders = true;
+
         const card = document.createElement('div');
         card.className = 'card';
         card.style.padding = '1rem';
+        
+        // Deshabilitar botones en los extremos
+        const leftDisabled = o.estado === 'Cancelado' ? 'disabled' : '';
+        const rightDisabled = o.estado === 'Entregado' ? 'disabled' : '';
+
         card.innerHTML = `
             <p><strong>Auto:</strong> ${o.vehiculos?.marca} ${o.vehiculos?.modelo} (${o.vehiculos?.patente})</p>
             <p><strong>Cliente:</strong> ${o.vehiculos?.usuarios?.nombre || 'Desconocido'}</p>
             <p><strong>Fecha:</strong> ${new Date(o.fecha_ingreso).toLocaleString()}</p>
             <hr style="border-color:rgba(255,255,255,0.1); margin:0.5rem 0;">
             <p class="text-muted" style="font-size:0.9rem">${o.observaciones}</p>
-            <div style="margin-top:1rem; display:flex; gap:0.5rem;">
-                <select class="btn btn-secondary btn-small" onchange="changeOrderStatus('${o.id}', this.value)" style="width: 100%;">
-                    <option value="Pendiente" ${o.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                    <option value="En Revisión" ${o.estado === 'En Revisión' ? 'selected' : ''}>En Revisión</option>
-                    <option value="Listo" ${o.estado === 'Listo' ? 'selected' : ''}>Listo</option>
-                </select>
+            <div style="margin-top:1rem; display:flex; justify-content: space-between; align-items: center;">
+                <button class="btn btn-secondary btn-small" onclick="reverseOrder('${o.id}', '${o.estado}')" ${leftDisabled} title="Retroceder o Cancelar">⬅️</button>
+                <span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-light); font-size: 0.7rem;">${o.estado}</span>
+                <button class="btn btn-secondary btn-small" onclick="advanceOrder('${o.id}', '${o.estado}')" ${rightDisabled} title="Avanzar etapa">➡️</button>
             </div>
         `;
 
-        if (o.estado === 'Pendiente') colPendiente.appendChild(card);
-        else if (o.estado === 'En Revisión') colRevision.appendChild(card);
-        else colListo.appendChild(card);
+        if (cols[o.estado]) cols[o.estado].appendChild(card);
+        else cols['Pendiente'].appendChild(card); // Fallback
     });
+
+    if(!hasActiveOrders) {
+        cols['Pendiente'].innerHTML = '<p style="text-align:center;color:var(--text-muted); font-size: 0.9rem;">Sin órdenes activas</p>';
+    }
 }
+
+const orderStates = ['Cancelado', 'Pendiente', 'Aceptado', 'En Revisión', 'Terminado', 'Entregado'];
+
+window.advanceOrder = async (orderId, currentState) => {
+    const idx = orderStates.indexOf(currentState);
+    if (idx >= 0 && idx < orderStates.length - 1) {
+        await window.changeOrderStatus(orderId, orderStates[idx + 1]);
+    }
+};
+
+window.reverseOrder = async (orderId, currentState) => {
+    const idx = orderStates.indexOf(currentState);
+    if (idx > 0) {
+        if (orderStates[idx - 1] === 'Cancelado') {
+            if (!confirm('¿Estás seguro de que quieres rechazar/cancelar esta orden? Desaparecerá del tablero.')) return;
+        }
+        await window.changeOrderStatus(orderId, orderStates[idx - 1]);
+    }
+};
 
 window.changeOrderStatus = async (orderId, newStatus) => {
     try {
         await updateOrderStatus(orderId, newStatus);
-        showNotification("Estado actualizado", "success");
+        showNotification("Estado actualizado a: " + newStatus, "success");
         loadOwnerDashboard(); // Recargar Kanban
     } catch (error) {
         showNotification(error.message, "error");

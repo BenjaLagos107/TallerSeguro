@@ -36,8 +36,7 @@ export async function getMisReservas(userId) {
     const { data: ordenes, error: oError } = await supabase
         .from('ordenes_trabajo')
         .select('*, talleres(nombre)')
-        .in('vehiculo_id', vIds)
-        .order('created_at', { ascending: false });
+        .in('vehiculo_id', vIds);
 
     if (oError) throw oError;
 

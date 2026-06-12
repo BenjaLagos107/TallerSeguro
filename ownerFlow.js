@@ -36,8 +36,7 @@ export async function getTallerOrders(tallerId) {
             *,
             vehiculos ( marca, modelo, patente, usuarios(nombre, telefono) )
         `)
-        .eq('taller_id', tallerId)
-        .order('created_at', { ascending: false });
+        .eq('taller_id', tallerId);
     
     if (error) throw error;
     return data;

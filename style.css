@@ -361,6 +361,84 @@ body {
   }
 }
 
+/* DEMO COMPARADOR SECTION */
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.demo-card {
+  position: relative;
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+}
+
+.highlighted-card {
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+.card-badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.card-stars {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.demo-taller-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+
+.demo-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.demo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5rem;
+  color: var(--text-light);
+}
+
+.demo-row strong {
+  color: #ffffff;
+}
+
+.demo-btn {
+  width: 100%;
+  padding: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .demo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* CARDS */
 .card {
   background: var(--card-bg);

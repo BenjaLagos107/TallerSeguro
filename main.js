@@ -133,8 +133,7 @@ function setupEventListeners() {
     // Landing Roles
     document.getElementById('btn-role-user').addEventListener('click', () => {
         currentRole = 'user';
-        if (currentUser) switchView('user-dashboard');
-        else document.getElementById('btn-show-login').click();
+        switchView('user-dashboard');
     });
 
     document.getElementById('btn-role-owner').addEventListener('click', () => {
@@ -157,17 +156,32 @@ function setupEventListeners() {
 
     document.getElementById('booking-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const tallerId = document.getElementById('booking-taller-id').value;
-        const formData = {
-            marca: document.getElementById('booking-marca').value,
-            modelo: document.getElementById('booking-modelo').value,
-            patente: document.getElementById('booking-patente').value,
-            km: document.getElementById('booking-km').value,
-            date: document.getElementById('booking-date').value,
-            notes: document.getElementById('booking-notes').value,
-        };
-
+        
         try {
+            // Si no hay usuario, registrarlo ahora mismo
+            if (!currentUser) {
+                const email = document.getElementById('booking-email').value;
+                const password = document.getElementById('booking-password').value;
+                const nombre = document.getElementById('booking-nombre').value;
+                
+                await signUp(email, password, nombre);
+                await checkSession(); // Carga la sesión recién creada
+                
+                if (!currentUser) {
+                    throw new Error("No se pudo iniciar sesión automáticamente. Revisa si necesitas confirmar tu correo.");
+                }
+            }
+
+            const tallerId = document.getElementById('booking-taller-id').value;
+            const formData = {
+                marca: document.getElementById('booking-marca').value,
+                modelo: document.getElementById('booking-modelo').value,
+                patente: document.getElementById('booking-patente').value,
+                km: document.getElementById('booking-km').value,
+                date: document.getElementById('booking-date').value,
+                notes: document.getElementById('booking-notes').value,
+            };
+
             await createReserva(currentUser.id, tallerId, formData);
             document.getElementById('booking-modal').classList.add('hidden');
             showNotification("Reserva confirmada con éxito", "success");
@@ -261,6 +275,20 @@ async function loadUserDashboard() {
 window.openBookingModal = (tallerId, tallerNombre) => {
     document.getElementById('booking-taller-id').value = tallerId;
     document.getElementById('booking-taller-name').textContent = tallerNombre;
+    
+    const guestFields = document.getElementById('booking-guest-fields');
+    if (!currentUser) {
+        guestFields.classList.remove('hidden');
+        document.getElementById('booking-nombre').required = true;
+        document.getElementById('booking-email').required = true;
+        document.getElementById('booking-password').required = true;
+    } else {
+        guestFields.classList.add('hidden');
+        document.getElementById('booking-nombre').required = false;
+        document.getElementById('booking-email').required = false;
+        document.getElementById('booking-password').required = false;
+    }
+
     document.getElementById('booking-modal').classList.remove('hidden');
 };
 

@@ -130,6 +130,14 @@
             <h2>Reservar Cita en <span id="booking-taller-name"></span></h2>
             <form id="booking-form">
                 <input type="hidden" id="booking-taller-id">
+                
+                <div id="booking-guest-fields" class="hidden" style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                    <h4>Crea tu cuenta para gestionar la reserva</h4>
+                    <input type="text" id="booking-nombre" placeholder="Tu Nombre Completo">
+                    <input type="email" id="booking-email" placeholder="Tu Correo Electrónico">
+                    <input type="password" id="booking-password" placeholder="Crea una contraseña">
+                </div>
+
                 <h4>Datos de tu Vehículo</h4>
                 <input type="text" id="booking-marca" placeholder="Marca (ej. Toyota)" required>
                 <input type="text" id="booking-modelo" placeholder="Modelo (ej. Yaris)" required>

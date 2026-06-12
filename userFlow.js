@@ -9,6 +9,7 @@ export async function getTalleres() {
 }
 
 export async function getMisReservas(userId) {
+    if (!userId) return [];
     const { data, error } = await supabase
         .from('ordenes_trabajo')
         .select(`

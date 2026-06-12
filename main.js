@@ -634,6 +634,10 @@ function renderKanbanBoard(boardElement, ordenes) {
         const leftDisabled = o.estado === 'Cancelado' ? 'disabled' : '';
         const rightDisabled = o.estado === 'Entregado' ? 'disabled' : '';
 
+        const leftIcon = o.estado === 'Pendiente' ? '&#10006;' : '&larr;';
+        const leftTitle = o.estado === 'Pendiente' ? 'Rechazar / Cancelar' : 'Retroceder';
+        const rightIcon = '&rarr;';
+
         card.innerHTML = `
             <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem; margin-bottom: 0.25rem;">${o.servicio_solicitado || 'Servicio Personalizado'}</p>
             <p style="margin-bottom: 0.5rem;"><strong>Precio:</strong> ${o.precio_acordado ? '$' + o.precio_acordado : 'A convenir'}</p>
@@ -643,9 +647,9 @@ function renderKanbanBoard(boardElement, ordenes) {
             <hr style="border-color:rgba(255,255,255,0.1); margin:0.5rem 0;">
             <p class="text-muted" style="font-size:0.9rem">${o.observaciones}</p>
             <div style="margin-top:1rem; display:flex; justify-content: space-between; align-items: center;">
-                <button class="btn btn-secondary btn-small" onclick="reverseOrder('${o.id}', '${o.estado}')" ${leftDisabled} title="Retroceder o Cancelar">⬅️</button>
+                <button class="btn btn-secondary btn-small" onclick="reverseOrder('${o.id}', '${o.estado}')" ${leftDisabled} title="${leftTitle}">${leftIcon}</button>
                 <span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-light); font-size: 0.7rem;">${o.estado}</span>
-                <button class="btn btn-secondary btn-small" onclick="advanceOrder('${o.id}', '${o.estado}')" ${rightDisabled} title="Avanzar etapa">➡️</button>
+                <button class="btn btn-secondary btn-small" onclick="advanceOrder('${o.id}', '${o.estado}')" ${rightDisabled} title="Avanzar etapa">${rightIcon}</button>
             </div>
         `;
 

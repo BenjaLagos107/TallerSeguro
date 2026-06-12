@@ -28,7 +28,8 @@ async function checkSession() {
         const session = await getCurrentSession();
         if (session) {
             currentUser = session.user;
-            document.getElementById('user-email').textContent = currentUser.email;
+            const userName = currentUser.user_metadata?.nombre || currentUser.email.split('@')[0];
+            document.getElementById('user-email').textContent = `Hola, ${userName}!`;
             document.getElementById('btn-show-login').classList.add('hidden');
             document.getElementById('user-info').classList.remove('hidden');
         } else {

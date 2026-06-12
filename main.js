@@ -301,6 +301,9 @@ function setupEventListeners() {
     const filterSector = document.getElementById('filter-sector');
     if (filterSector) filterSector.addEventListener('change', loadUserDashboard);
     
+    const filterEspecialidad = document.getElementById('filter-especialidad');
+    if (filterEspecialidad) filterEspecialidad.addEventListener('change', loadUserDashboard);
+    
     const sortTalleres = document.getElementById('sort-talleres');
     if (sortTalleres) sortTalleres.addEventListener('change', loadUserDashboard);
 
@@ -347,6 +350,11 @@ async function loadUserDashboard() {
         const filterEl = document.getElementById('filter-sector');
         if (filterEl && filterEl.value) {
             talleres = talleres.filter(t => t.sector === filterEl.value);
+        }
+
+        const filterEspecialidadEl = document.getElementById('filter-especialidad');
+        if (filterEspecialidadEl && filterEspecialidadEl.value) {
+            talleres = talleres.filter(t => t.especialidades && t.especialidades.includes(filterEspecialidadEl.value));
         }
 
         // Calcular promedios

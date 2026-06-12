@@ -76,8 +76,8 @@ ALTER TABLE public.resenas ENABLE ROW LEVEL SECURITY;
 
 -- Políticas permisivas para el MVP (Permite lectura y escritura a cualquier usuario logueado o anónimo)
 -- NOTA: Ajusta esto para mayor seguridad más adelante.
-CREATE POLICY "Permitir todo a usuarios" ON public.usuarios FOR ALL USING (true);
-CREATE POLICY "Permitir todo a talleres" ON public.talleres FOR ALL USING (true);
-CREATE POLICY "Permitir todo a vehiculos" ON public.vehiculos FOR ALL USING (true);
-CREATE POLICY "Permitir todo a ordenes" ON public.ordenes_trabajo FOR ALL USING (true);
-CREATE POLICY "Permitir todo a resenas" ON public.resenas FOR ALL USING (true);
+CREATE POLICY "Permitir todo a usuarios" ON public.usuarios FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Permitir todo a talleres" ON public.talleres FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Permitir todo a vehiculos" ON public.vehiculos FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Permitir todo a ordenes" ON public.ordenes_trabajo FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Permitir todo a resenas" ON public.resenas FOR ALL USING (true) WITH CHECK (true);

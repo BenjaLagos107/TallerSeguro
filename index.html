@@ -189,9 +189,9 @@
                     <button class="btn btn-secondary btn-small" style="margin-bottom: 0.5rem;" onclick="switchView('landing')">&larr; Volver al Inicio</button>
                     <h2 style="margin: 0;">Panel de Cliente</h2>
                 </div>
-                <div class="tabs">
                     <button class="tab-btn active" data-tab="tab-talleres">Buscar Talleres</button>
                     <button class="tab-btn" data-tab="tab-mis-reservas">Mis Reservas</button>
+                    <button class="tab-btn" data-tab="tab-mi-auto">Mi auto</button>
                 </div>
             </div>
 
@@ -247,6 +247,14 @@
                 <h3>Mis Reservas y Órdenes Activas</h3>
                 <div id="reservas-list" class="grid-list">
                     <!-- Cards de reservas insertadas por JS -->
+                </div>
+            </div>
+
+            <div id="tab-mi-auto" class="tab-content hidden">
+                <h3>Mis Vehículos Guardados</h3>
+                <div id="vehiculos-list" class="grid-list" style="margin-top: 1rem;">
+                    <!-- Cards de vehiculos insertadas por JS -->
+                    <p style="color: var(--text-muted);">Cargando vehículos...</p>
                 </div>
             </div>
         </section>
@@ -322,6 +330,11 @@
                 </div>
 
                 <h4>Datos de tu Vehículo</h4>
+                <div id="booking-vehiculo-selector-container" class="hidden" style="margin-bottom: 0.5rem;">
+                    <select id="booking-saved-vehicle" style="width: 100%; margin-bottom: 0.5rem;">
+                        <option value="new">Ingresar nuevo vehículo...</option>
+                    </select>
+                </div>
                 <input type="text" id="booking-marca" placeholder="Marca (ej. Toyota)" required>
                 <input type="text" id="booking-modelo" placeholder="Modelo (ej. Yaris)" required>
                 <input type="text" id="booking-patente" placeholder="Patente" required>

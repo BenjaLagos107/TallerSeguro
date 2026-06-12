@@ -8,6 +8,17 @@ export async function getTalleres() {
     return data;
 }
 
+export async function getVehiculos(userId) {
+    if (!userId) return [];
+    const { data, error } = await supabase
+        .from('vehiculos')
+        .select('*')
+        .eq('usuario_id', userId);
+    
+    if (error) throw error;
+    return data || [];
+}
+
 export async function getMisReservas(userId) {
     if (!userId) return [];
     const { data, error } = await supabase

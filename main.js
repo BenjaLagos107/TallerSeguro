@@ -1,6 +1,6 @@
 import { supabase, supabaseError } from './supabaseClient.js';
 import { getCurrentSession, signIn, signUp, signOut, getUserProfile } from './auth.js';
-import { getTalleres, getMisReservas, createReserva, createResena, getAllResenas } from './userFlow.js';
+import { getTalleres, getMisReservas, createReserva, createResena, getAllResenas, getVehiculos } from './userFlow.js';
 import { getMisTalleres, createTallerProfile, getTallerOrders, updateOrderStatus, getTallerServicios, addTallerServicio } from './ownerFlow.js';
 
 let currentUser = null;
@@ -448,7 +448,31 @@ async function loadUserDashboard() {
                 grid.appendChild(card);
             });
         }
+        // Cargar Vehículos (Mi Auto)
+    try {
+        window.userVehicles = await getVehiculos(currentUser.id);
+        const gridVehiculos = document.getElementById('vehiculos-list');
+        if (gridVehiculos) {
+            gridVehiculos.innerHTML = '';
+            if (window.userVehicles.length === 0) {
+                gridVehiculos.innerHTML = '<p>Aún no tienes vehículos guardados. Se guardarán automáticamente cuando hagas una reserva.</p>';
+            } else {
+                window.userVehicles.forEach(v => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <h4>${v.marca} ${v.modelo}</h4>
+                        <p class="text-muted">🚗 Patente: <strong>${v.patente}</strong></p>
+                        <p class="text-muted">⏱ Kilometraje: ${v.kilometraje ? v.kilometraje.toLocaleString('es-CL') : 'No registrado'}</p>
+                    `;
+                    gridVehiculos.appendChild(card);
+                });
+            }
+        }
     } catch (e) {
+        console.error('Error cargando vehículos:', e);
+    }
+} catch (e) {
         console.error(e);
     }
 }
@@ -468,6 +492,52 @@ window.openBookingModal = async (tallerId, tallerNombre) => {
         document.getElementById('booking-nombre').required = false;
         document.getElementById('booking-email').required = false;
         document.getElementById('booking-password').required = false;
+    }
+
+    // Resetear formulario
+    document.getElementById('booking-form').reset();
+
+    // Llenar selector de vehículos si existen
+    const vehiculoSelectorContainer = document.getElementById('booking-vehiculo-selector-container');
+    const vehiculoSelect = document.getElementById('booking-saved-vehicle');
+    
+    if (window.userVehicles && window.userVehicles.length > 0) {
+        vehiculoSelect.innerHTML = '<option value="new">Ingresar nuevo vehículo...</option>';
+        window.userVehicles.forEach(v => {
+            const option = document.createElement('option');
+            option.value = v.patente;
+            option.textContent = `${v.marca} ${v.modelo} (${v.patente})`;
+            option.dataset.marca = v.marca;
+            option.dataset.modelo = v.modelo;
+            option.dataset.patente = v.patente;
+            option.dataset.km = v.kilometraje || '';
+            vehiculoSelect.appendChild(option);
+        });
+        
+        vehiculoSelect.onchange = (e) => {
+            const selectedOpt = e.target.options[e.target.selectedIndex];
+            const marcaInput = document.getElementById('booking-marca');
+            const modeloInput = document.getElementById('booking-modelo');
+            const patenteInput = document.getElementById('booking-patente');
+            const kmInput = document.getElementById('booking-km');
+
+            if (e.target.value === 'new') {
+                marcaInput.value = '';
+                modeloInput.value = '';
+                patenteInput.value = '';
+                kmInput.value = '';
+            } else {
+                marcaInput.value = selectedOpt.dataset.marca;
+                modeloInput.value = selectedOpt.dataset.modelo;
+                patenteInput.value = selectedOpt.dataset.patente;
+                const km = selectedOpt.dataset.km;
+                kmInput.value = km ? parseInt(km, 10).toLocaleString('es-CL') : '';
+            }
+        };
+        
+        vehiculoSelectorContainer.classList.remove('hidden');
+    } else {
+        vehiculoSelectorContainer.classList.add('hidden');
     }
 
     // Cargar servicios

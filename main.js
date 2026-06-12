@@ -307,6 +307,16 @@ function setupEventListeners() {
     const sortTalleres = document.getElementById('sort-talleres');
     if (sortTalleres) sortTalleres.addEventListener('change', loadUserDashboard);
 
+    const btnClearFilters = document.getElementById('btn-clear-filters');
+    if (btnClearFilters) {
+        btnClearFilters.addEventListener('click', () => {
+            if (filterSector) filterSector.value = "";
+            if (filterEspecialidad) filterEspecialidad.value = "";
+            if (sortTalleres) sortTalleres.value = "default";
+            loadUserDashboard();
+        });
+    }
+
     const formAddResena = document.getElementById('form-add-resena');
     if (formAddResena) {
         formAddResena.addEventListener('submit', async (e) => {

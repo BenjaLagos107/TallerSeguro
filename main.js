@@ -511,8 +511,13 @@ async function loadOwnerDashboard() {
         if (!misTalleres || misTalleres.length === 0) {
             // Estado vacío general
             profileList.innerHTML = '<p>No tienes ningún taller inscrito a tu nombre.</p>';
-            ordersContainer.innerHTML = '<p class="text-muted" style="padding: 2rem 0; text-align: center;">No tienes órdenes de trabajo porque no tienes talleres registrados.</p>';
-            btnAddOrders.classList.remove('hidden');
+            ordersContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem 0;">
+                    <p class="text-muted" style="margin-bottom: 1rem;">No tienes órdenes de trabajo porque no tienes talleres registrados.</p>
+                    <button class="btn btn-primary" onclick="document.getElementById('modal-add-taller').classList.remove('hidden')">Inscribir Taller</button>
+                </div>
+            `;
+            btnAddOrders.classList.add('hidden');
             return;
         }
 

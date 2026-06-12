@@ -251,6 +251,62 @@ body {
   }
 }
 
+/* PROBLEM SECTION */
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.pain-points {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pain-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 4px solid;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.pain-card:hover {
+  transform: translateX(5px);
+}
+
+.pain-card p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.pain-icon {
+  font-size: 1.25rem;
+}
+
+.explanation-card {
+  padding: 2.5rem;
+  border-radius: 1rem;
+}
+
+@media (max-width: 768px) {
+  .problem-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
 /* CARDS */
 .card {
   background: var(--card-bg);

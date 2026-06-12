@@ -396,7 +396,14 @@
                 <input type="number" id="add-servicio-precio" placeholder="Ej. 45000" required>
                 
                 <h4 style="margin-bottom: 0.5rem;">Tiempo Estimado</h4>
-                <input type="text" id="add-servicio-tiempo" placeholder="Ej. 2 horas" required>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <input type="number" id="add-servicio-tiempo-valor" placeholder="Ej. 2" required min="1" style="margin-bottom: 0;">
+                    <select id="add-servicio-tiempo-unidad" required style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                        <option value="Minutos">Minutos</option>
+                        <option value="Horas" selected>Horas</option>
+                        <option value="Días">Días</option>
+                    </select>
+                </div>
                 
                 <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Guardar Servicio</button>
             </form>

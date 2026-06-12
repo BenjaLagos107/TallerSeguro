@@ -271,11 +271,14 @@ function setupEventListeners() {
         formAddServicio.addEventListener('submit', async (e) => {
             e.preventDefault();
             const tallerId = document.getElementById('add-servicio-taller-id').value;
+            const tiempoValor = document.getElementById('add-servicio-tiempo-valor').value;
+            const tiempoUnidad = document.getElementById('add-servicio-tiempo-unidad').value;
+            
             const payload = {
                 taller_id: tallerId,
                 servicio_nombre: document.getElementById('add-servicio-nombre').value,
                 precio: parseFloat(document.getElementById('add-servicio-precio').value),
-                tiempo_estimado: document.getElementById('add-servicio-tiempo').value
+                tiempo_estimado: `${tiempoValor} ${tiempoUnidad}`
             };
             try {
                 await addTallerServicio(payload);

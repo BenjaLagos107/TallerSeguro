@@ -624,6 +624,23 @@ function renderKanbanBoard(boardElement, ordenes) {
 
     ordenes.forEach(o => {
         if (o.estado === 'Cancelado') return; // Ocultar canceladas del Kanban
+        
+        if (o.estado === 'Entregado' && o.updated_at) {
+            const updatedAt = new Date(o.updated_at);
+            const now = new Date();
+            const diffMinutes = (now - updatedAt) / (1000 * 60);
+            
+            if (diffMinutes >= 5) {
+                return; // Ocultar si pasaron 5 minutos
+            } else {
+                // Programar recarga para cuando pasen los 5 minutos
+                const msRemaining = Math.max(0, (5 - diffMinutes) * 60 * 1000);
+                setTimeout(() => {
+                    loadOwnerDashboard();
+                }, msRemaining);
+            }
+        }
+
         hasActiveOrders = true;
 
         const card = document.createElement('div');

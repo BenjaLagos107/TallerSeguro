@@ -46,7 +46,7 @@ export async function getTallerOrders(tallerId) {
 export async function updateOrderStatus(orderId, newStatus) {
     const { data, error } = await supabase
         .from('ordenes_trabajo')
-        .update({ estado: newStatus })
+        .update({ estado: newStatus, updated_at: new Date().toISOString() })
         .eq('id', orderId)
         .select()
         .single();

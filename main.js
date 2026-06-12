@@ -372,7 +372,8 @@ async function loadOwnerDashboard() {
         }
 
     } catch (e) {
-        console.error(e);
+        console.error("Error al cargar el panel de taller:", e);
+        showNotification("Error cargando tus talleres: " + e.message, "error");
     }
 }
 

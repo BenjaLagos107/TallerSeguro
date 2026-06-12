@@ -4,8 +4,7 @@ export async function getMisTalleres(userId) {
     const { data, error } = await supabase
         .from('talleres')
         .select('*')
-        .eq('dueno_id', userId)
-        .order('created_at', { ascending: false });
+        .eq('dueno_id', userId);
     
     if (error) throw error;
     return data || [];

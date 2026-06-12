@@ -191,9 +191,8 @@ function setupEventListeners() {
             }
 
             const tallerId = document.getElementById('booking-taller-id').value;
-            const selectEl = document.getElementById('booking-servicio');
-            const selectedOption = selectEl.options[selectEl.selectedIndex];
-
+            const selectedRadio = document.querySelector('input[name="booking-servicio"]:checked') || document.querySelector('input[name="booking-servicio"][type="hidden"]');
+            
             const formData = {
                 marca: document.getElementById('booking-marca').value,
                 modelo: document.getElementById('booking-modelo').value,
@@ -201,8 +200,8 @@ function setupEventListeners() {
                 km: document.getElementById('booking-km').value.replace(/\D/g, ''),
                 date: document.getElementById('booking-date').value,
                 notes: document.getElementById('booking-notes').value,
-                servicio_solicitado: selectEl.value || 'Servicio Personalizado',
-                precio_acordado: selectedOption && selectedOption.dataset.precio ? parseFloat(selectedOption.dataset.precio) : null
+                servicio_solicitado: selectedRadio ? selectedRadio.value : 'Servicio Personalizado',
+                precio_acordado: selectedRadio && selectedRadio.dataset.precio ? parseFloat(selectedRadio.dataset.precio) : null
             };
 
             await createReserva(currentUser.id, tallerId, formData);
@@ -454,21 +453,38 @@ window.openBookingModal = async (tallerId, tallerNombre) => {
     }
 
     // Cargar servicios
-    const servicioSelect = document.getElementById('booking-servicio');
-    servicioSelect.innerHTML = '<option value="">Cargando servicios...</option>';
+    const serviciosContainer = document.getElementById('booking-servicios-container');
+    serviciosContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Cargando servicios...</p>';
     try {
         const servicios = await getTallerServicios(tallerId);
         if (servicios.length === 0) {
-            servicioSelect.innerHTML = '<option value="">Este taller no tiene servicios registrados</option>';
-            servicioSelect.required = false;
+            serviciosContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Este taller no tiene servicios registrados. Solo se permite servicio personalizado.</p>';
+            serviciosContainer.innerHTML += `<input type="hidden" name="booking-servicio" value="Servicio Personalizado" data-precio="">`;
         } else {
-            servicioSelect.innerHTML = '<option value="" disabled selected>Elige un servicio...</option>' + 
-                servicios.map(s => `<option value="${s.servicio_nombre}" data-precio="${s.precio}">${s.servicio_nombre} - $${s.precio} (aprox ${s.tiempo_estimado})</option>`).join('');
-            servicioSelect.required = true;
+            serviciosContainer.innerHTML = servicios.map((s, index) => `
+                <label class="card hoverable-radio" style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; transition: all 0.3s;">
+                    <input type="radio" name="booking-servicio" value="${s.servicio_nombre}" data-precio="${s.precio}" ${index === 0 ? 'required' : ''} style="margin: 0; width: 1.2rem; height: 1.2rem; accent-color: var(--primary);">
+                    <div style="flex: 1;">
+                        <strong style="display: block; color: var(--primary-color); font-size: 1.05rem;">${s.servicio_nombre}</strong>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">$${s.precio} (Aprox. ${s.tiempo_estimado})</span>
+                    </div>
+                </label>
+            `).join('');
+            
+            // Añadir CSS para el hover si no existe
+            if (!document.getElementById('radio-hover-style')) {
+                const style = document.createElement('style');
+                style.id = 'radio-hover-style';
+                style.innerHTML = `
+                    .hoverable-radio:hover { border-color: var(--primary) !important; background: rgba(59, 130, 246, 0.05); }
+                    .hoverable-radio:has(input:checked) { border-color: var(--primary) !important; background: rgba(59, 130, 246, 0.1); }
+                `;
+                document.head.appendChild(style);
+            }
         }
     } catch (e) {
         console.error(e);
-        servicioSelect.innerHTML = '<option value="">Error cargando servicios</option>';
+        serviciosContainer.innerHTML = '<p style="color: red; font-size: 0.9rem;">Error cargando servicios</p>';
     }
 
     document.getElementById('booking-modal').classList.remove('hidden');

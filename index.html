@@ -319,9 +319,9 @@
                 <input type="text" inputmode="numeric" id="booking-km" placeholder="Kilometraje aproximado">
                 
                 <h4>Detalles de la Reserva</h4>
-                <select id="booking-servicio" required style="margin-bottom: 0.5rem;">
-                    <option value="">Cargando servicios...</option>
-                </select>
+                <div id="booking-servicios-container" style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Cargando servicios...</p>
+                </div>
                 <input type="datetime-local" id="booking-date" required>
                 <textarea id="booking-notes" placeholder="Deja algun comentario" required></textarea>
                 <button type="submit" class="btn btn-primary">Confirmar Reserva</button>

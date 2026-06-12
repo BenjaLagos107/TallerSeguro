@@ -651,3 +651,9 @@ input:focus, textarea:focus {
 }
 .notif-success { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success); color: var(--success); }
 .notif-error { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--error); color: var(--error); }
+
+/* FIX PARA SELECTS EN MODO OSCURO */
+select option {
+  background-color: var(--bg-color);
+  color: var(--text-light);
+}

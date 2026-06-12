@@ -252,6 +252,36 @@ function setupEventListeners() {
             showNotification(error.message, "error");
         }
     });
+
+    const formAddServicio = document.getElementById('form-add-servicio');
+    if (formAddServicio) {
+        formAddServicio.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tallerId = document.getElementById('add-servicio-taller-id').value;
+            const payload = {
+                taller_id: tallerId,
+                servicio_nombre: document.getElementById('add-servicio-nombre').value,
+                precio: parseFloat(document.getElementById('add-servicio-precio').value),
+                tiempo_estimado: document.getElementById('add-servicio-tiempo').value
+            };
+            try {
+                await addTallerServicio(payload);
+                showNotification("Servicio agregado exitosamente", "success");
+                document.getElementById('modal-add-servicio').classList.add('hidden');
+                formAddServicio.reset();
+                loadOwnerDashboard(); // Recargar para mostrar
+            } catch (err) {
+                showNotification("Error agregando servicio: " + err.message, "error");
+            }
+        });
+    }
+
+    const closeAddServicioModal = document.getElementById('close-add-servicio-modal');
+    if (closeAddServicioModal) {
+        closeAddServicioModal.addEventListener('click', () => {
+            document.getElementById('modal-add-servicio').classList.add('hidden');
+        });
+    }
 }
 
 // ==========================================

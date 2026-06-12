@@ -153,6 +153,10 @@ body {
   .hidden-mobile {
     display: none !important;
   }
+  .nav-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 /* LANDING REDESIGN */

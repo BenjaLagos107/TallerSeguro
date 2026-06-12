@@ -297,7 +297,7 @@
     <div id="booking-modal" class="modal hidden">
         <div class="modal-content card">
             <span class="close-btn" id="close-booking-modal">&times;</span>
-            <h2>Reservar Cita en <span id="booking-taller-name"></span></h2>
+            <h2 style="margin-bottom: 1.5rem;">Reservar Cita en <span id="booking-taller-name"></span></h2>
             <form id="booking-form">
                 <input type="hidden" id="booking-taller-id">
                 
@@ -319,7 +319,7 @@
                     <option value="">Cargando servicios...</option>
                 </select>
                 <input type="datetime-local" id="booking-date" required>
-                <textarea id="booking-notes" placeholder="Describe el problema o servicio que necesitas..." required></textarea>
+                <textarea id="booking-notes" placeholder="Deja algun comentario" required></textarea>
                 <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
             </form>
         </div>

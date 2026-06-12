@@ -1,6 +1,6 @@
 import { supabase, supabaseError } from './supabaseClient.js';
 import { getCurrentSession, signIn, signUp, signOut, getUserProfile } from './auth.js';
-import { getTalleres, getMisReservas, createReserva } from './userFlow.js';
+import { getTalleres, getMisReservas, createReserva, createResena, getAllResenas } from './userFlow.js';
 import { getMisTalleres, createTallerProfile, getTallerOrders, updateOrderStatus, getTallerServicios, addTallerServicio } from './ownerFlow.js';
 
 let currentUser = null;
@@ -285,9 +285,40 @@ function setupEventListeners() {
     }
 
     const filterSector = document.getElementById('filter-sector');
-    if (filterSector) {
-        filterSector.addEventListener('change', loadUserDashboard);
+    if (filterSector) filterSector.addEventListener('change', loadUserDashboard);
+    
+    const sortTalleres = document.getElementById('sort-talleres');
+    if (sortTalleres) sortTalleres.addEventListener('change', loadUserDashboard);
+
+    const formAddResena = document.getElementById('form-add-resena');
+    if (formAddResena) {
+        formAddResena.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                orden_id: document.getElementById('add-resena-orden-id').value,
+                taller_id: document.getElementById('add-resena-taller-id').value,
+                usuario_id: currentUser.id,
+                calificacion: parseInt(document.getElementById('add-resena-calificacion').value),
+                comentario: document.getElementById('add-resena-comentario').value
+            };
+            try {
+                await createResena(payload);
+                showNotification("¡Reseña guardada exitosamente!", "success");
+                document.getElementById('modal-add-resena').classList.add('hidden');
+                formAddResena.reset();
+                loadUserDashboard(); // Refresh to update reviews
+            } catch (err) {
+                showNotification("Error guardando reseña: " + err.message, "error");
+            }
+        });
     }
+
+    const closeAddResenaModal = document.getElementById('close-add-resena-modal');
+    if (closeAddResenaModal) closeAddResenaModal.addEventListener('click', () => document.getElementById('modal-add-resena').classList.add('hidden'));
+
+    const closeViewResenasModal = document.getElementById('close-view-resenas-modal');
+    if (closeViewResenasModal) closeViewResenasModal.addEventListener('click', () => document.getElementById('modal-view-resenas').classList.add('hidden'));
+
 }
 
 // ==========================================
@@ -297,9 +328,29 @@ async function loadUserDashboard() {
     // Cargar Talleres
     try {
         let talleres = await getTalleres();
+        window.allResenas = await getAllResenas();
+
         const filterEl = document.getElementById('filter-sector');
         if (filterEl && filterEl.value) {
             talleres = talleres.filter(t => t.sector === filterEl.value);
+        }
+
+        // Calcular promedios
+        talleres.forEach(t => {
+            const tResenas = window.allResenas.filter(r => r.taller_id === t.id);
+            if (tResenas.length > 0) {
+                t.promedio = tResenas.reduce((acc, r) => acc + r.calificacion, 0) / tResenas.length;
+                t.total_resenas = tResenas.length;
+            } else {
+                t.promedio = 0;
+                t.total_resenas = 0;
+            }
+        });
+
+        // Ordenar
+        const sortEl = document.getElementById('sort-talleres');
+        if (sortEl && sortEl.value === 'rating') {
+            talleres.sort((a, b) => b.promedio - a.promedio);
         }
 
         const grid = document.getElementById('talleres-list');
@@ -310,10 +361,15 @@ async function loadUserDashboard() {
             talleres.forEach(t => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                const starsHtml = t.total_resenas > 0 ? `⭐ ${t.promedio.toFixed(1)} (${t.total_resenas} reseñas)` : 'Nuevo (Sin reseñas)';
+                const reviewsBtn = t.total_resenas > 0 ? `<button class="btn btn-secondary btn-small" style="margin-top:0.5rem; width:100%" onclick="openViewResenasModal('${t.id}', '${t.nombre}')">Ver Comentarios</button>` : '';
+
                 card.innerHTML = `
                     <h4>${t.nombre}</h4>
                     <p class="text-muted">📍 ${t.direccion} (${t.sector || 'Sin sector especificado'})</p>
                     <p class="text-muted">🔧 ${t.especialidades || 'General'}</p>
+                    <p style="margin-top:0.5rem; font-weight: bold; color: #fbbf24;">${starsHtml}</p>
+                    ${reviewsBtn}
                     <button class="btn btn-primary" style="margin-top:1rem; width:100%" onclick="openBookingModal('${t.id}', '${t.nombre}')">Reservar Hora</button>
                 `;
                 grid.appendChild(card);
@@ -340,6 +396,13 @@ async function loadUserDashboard() {
                 else if (r.estado === 'En Revisión') statusClass = 'status-revision';
                 else if (r.estado === 'Terminado' || r.estado === 'Entregado') statusClass = 'status-listo';
                 
+                let reviewBtn = '';
+                if (r.estado === 'Entregado' && !r.tiene_resena) {
+                    reviewBtn = `<button class="btn btn-primary btn-small" style="margin-top:1rem; width:100%" onclick="openAddResenaModal('${r.id}', '${r.taller_id}')">Dejar Reseña ⭐</button>`;
+                } else if (r.estado === 'Entregado' && r.tiene_resena) {
+                    reviewBtn = `<p class="text-muted" style="margin-top:1rem; font-size:0.9rem; text-align:center;">Ya dejaste una reseña ✅</p>`;
+                }
+
                 card.innerHTML = `
                     <h4>Taller: ${r.talleres ? r.talleres.nombre : 'Desconocido'}</h4>
                     <p><strong>Auto:</strong> ${r.vehiculo ? r.vehiculo.marca + ' ' + r.vehiculo.modelo + ' (' + r.vehiculo.patente + ')' : 'N/A'}</p>
@@ -348,6 +411,7 @@ async function loadUserDashboard() {
                     <div style="margin-top:1rem;">
                         <span class="status-badge ${statusClass}">${r.estado}</span>
                     </div>
+                    ${reviewBtn}
                 `;
                 grid.appendChild(card);
             });
@@ -393,6 +457,36 @@ window.openBookingModal = async (tallerId, tallerNombre) => {
     }
 
     document.getElementById('booking-modal').classList.remove('hidden');
+};
+
+window.openAddResenaModal = (ordenId, tallerId) => {
+    document.getElementById('add-resena-orden-id').value = ordenId;
+    document.getElementById('add-resena-taller-id').value = tallerId;
+    document.getElementById('modal-add-resena').classList.remove('hidden');
+};
+
+window.openViewResenasModal = (tallerId, tallerNombre) => {
+    const container = document.getElementById('resenas-list-container');
+    container.innerHTML = '';
+    
+    const tResenas = (window.allResenas || []).filter(r => r.taller_id === tallerId);
+    if (tResenas.length === 0) {
+        container.innerHTML = '<p>No hay comentarios.</p>';
+    } else {
+        tResenas.forEach(r => {
+            const div = document.createElement('div');
+            div.style.marginBottom = '1rem';
+            div.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+            div.style.paddingBottom = '1rem';
+            div.innerHTML = `
+                <p><strong>${r.usuarios?.nombre || 'Anónimo'}</strong> - <span style="color: #fbbf24;">⭐ ${r.calificacion}</span></p>
+                <p class="text-muted" style="margin-top: 0.5rem; font-size: 0.95rem;">"${r.comentario || ''}"</p>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">${new Date(r.created_at).toLocaleDateString()}</p>
+            `;
+            container.appendChild(div);
+        });
+    }
+    document.getElementById('modal-view-resenas').classList.remove('hidden');
 };
 
 window.openAddServicioModal = (tallerId) => {

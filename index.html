@@ -197,7 +197,12 @@
             <div id="tab-talleres" class="tab-content active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
                     <h3>Talleres Disponibles</h3>
-                    <select id="filter-sector" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <select id="sort-talleres" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                            <option value="default">Orden por Defecto</option>
+                            <option value="rating">Mejor Calificados</option>
+                        </select>
+                        <select id="filter-sector" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
                         <option value="">Todos los sectores</option>
                         <option value="Santiago Centro">Santiago Centro</option>
                         <option value="Providencia">Providencia</option>
@@ -218,6 +223,7 @@
                         <option value="Recoleta">Recoleta</option>
                         <option value="Estación Central">Estación Central</option>
                     </select>
+                    </div>
                 </div>
                 <div id="talleres-list" class="grid-list">
                     <!-- Cards de talleres insertadas por JS -->
@@ -392,6 +398,44 @@
                 
                 <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Guardar Servicio</button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL PARA DEJAR RESEÑA -->
+    <div id="modal-add-resena" class="modal hidden">
+        <div class="modal-content card">
+            <span class="close-btn" id="close-add-resena-modal">&times;</span>
+            <h2>Dejar Reseña</h2>
+            <form id="form-add-resena">
+                <input type="hidden" id="add-resena-orden-id">
+                <input type="hidden" id="add-resena-taller-id">
+                
+                <h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Calificación</h4>
+                <select id="add-resena-calificacion" required style="margin-bottom: 1rem; width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    <option value="" disabled selected>Elige una calificación...</option>
+                    <option value="5">⭐⭐⭐⭐⭐ (5) - Excelente</option>
+                    <option value="4">⭐⭐⭐⭐ (4) - Muy Bueno</option>
+                    <option value="3">⭐⭐⭐ (3) - Bueno</option>
+                    <option value="2">⭐⭐ (2) - Regular</option>
+                    <option value="1">⭐ (1) - Malo</option>
+                </select>
+
+                <h4 style="margin-bottom: 0.5rem;">Comentario</h4>
+                <textarea id="add-resena-comentario" placeholder="¿Cómo fue tu experiencia con el taller?" rows="4" style="margin-bottom: 1rem; width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);" required></textarea>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Reseña</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PARA LEER RESEÑAS -->
+    <div id="modal-view-resenas" class="modal hidden">
+        <div class="modal-content card" style="max-height: 80vh; overflow-y: auto;">
+            <span class="close-btn" id="close-view-resenas-modal">&times;</span>
+            <h2>Comentarios de Clientes</h2>
+            <div id="resenas-list-container" style="margin-top: 1.5rem;">
+                <!-- Lista inyectada por JS -->
+            </div>
         </div>
     </div>
 

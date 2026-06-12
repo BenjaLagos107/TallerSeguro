@@ -35,7 +35,7 @@ export async function getMisReservas(userId) {
     
     const { data: ordenes, error: oError } = await supabase
         .from('ordenes_trabajo')
-        .select('*, talleres(nombre)')
+        .select('*, talleres(nombre), resenas(id)')
         .in('vehiculo_id', vIds);
 
     if (oError) throw oError;
@@ -43,7 +43,7 @@ export async function getMisReservas(userId) {
     // Mezclar info para renderizar
     return ordenes.map(o => {
         const v = vehiculos.find(v => v.id === o.vehiculo_id);
-        return { ...o, vehiculo: v };
+        return { ...o, vehiculo: v, tiene_resena: o.resenas && o.resenas.length > 0 };
     });
 }
 
@@ -94,4 +94,24 @@ export async function createReserva(userId, tallerId, formData) {
     
     if (oErr) throw oErr;
     return orden;
+}
+
+export async function createResena(payload) {
+    const { data, error } = await supabase
+        .from('resenas')
+        .insert([payload])
+        .select()
+        .single();
+    
+    if (error) throw error;
+    return data;
+}
+
+export async function getAllResenas() {
+    const { data, error } = await supabase
+        .from('resenas')
+        .select('*, usuarios(nombre)');
+    
+    if (error) throw error;
+    return data || [];
 }

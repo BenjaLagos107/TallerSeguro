@@ -1143,10 +1143,14 @@ function renderKanbanBoard(boardElement, ordenes) {
                 <span style="background: rgba(255,255,255,0.1); padding: 0.2rem 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.85rem; font-weight: bold; white-space: nowrap;">${o.vehiculos?.patente || 'N/A'}</span>
             </div>
             <p class="text-muted" style="font-size:0.85rem; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${o.observaciones || 'Sin observaciones'}</p>
-            <div style="display:flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.8rem;">
-                <button class="btn btn-secondary" style="font-size: 1.3rem; width: 45px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); reverseOrder('${o.id}', '${o.estado}')" ${leftDisabled} title="${leftTitle}">${leftIcon}</button>
-                <span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-light); font-size: 0.75rem;">${o.estado}</span>
-                <button class="btn btn-secondary" style="font-size: 1.3rem; width: 45px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); advanceOrder('${o.id}', '${o.estado}')" ${rightDisabled} title="Avanzar etapa">${rightIcon}</button>
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.8rem;">
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <button class="btn btn-secondary" style="flex: 1; font-size: 1.5rem; padding: 0.5rem 0; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); reverseOrder('${o.id}', '${o.estado}')" ${leftDisabled} title="${leftTitle}">${leftIcon}</button>
+                    <button class="btn btn-secondary" style="flex: 1; font-size: 1.5rem; padding: 0.5rem 0; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); advanceOrder('${o.id}', '${o.estado}')" ${rightDisabled} title="Avanzar etapa">${rightIcon}</button>
+                </div>
+                <div style="text-align: center;">
+                    <span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-light); font-size: 0.75rem; display: inline-block;">${o.estado}</span>
+                </div>
             </div>
         `;
 

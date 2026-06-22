@@ -727,7 +727,7 @@ async function loadUserDashboard() {
     } catch (e) {
         console.error('Error cargando reservas:', e);
         const grid = document.getElementById('reservas-list');
-        if (grid) grid.innerHTML = '<p class="text-error">Error al cargar reservas.</p>';
+        if (grid) grid.innerHTML = `<p class="text-error">Error al cargar reservas: ${e.message || e}</p>`;
     }
 
     // Cargar Vehículos (Mi Auto)
@@ -762,7 +762,7 @@ async function loadUserDashboard() {
     } catch (e) {
         console.error('Error cargando vehículos:', e);
         const gridVehiculos = document.getElementById('vehiculos-list');
-        if (gridVehiculos) gridVehiculos.innerHTML = '<p class="text-error">Error al cargar vehículos.</p>';
+        if (gridVehiculos) gridVehiculos.innerHTML = `<p class="text-error">Error al cargar vehículos: ${e.message || e}</p>`;
     }
 }
 

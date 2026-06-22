@@ -4,24 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TallerSeguro</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style.css?v=15">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* INLINE CACHE-BUSTING STYLES FOR MOBILE */
+        @media (max-width: 768px) {
+            .logo { white-space: nowrap !important; font-size: 1.1rem !important; flex-shrink: 0 !important; display: block !important; }
+            .auth-controls { flex-wrap: nowrap !important; gap: 0.25rem !important; display: flex !important; align-items: center !important; }
+            #btn-soy-taller, #btn-quiero-probarlo { white-space: nowrap !important; padding: 0.3rem 0.5rem !important; font-size: 0.8rem !important; }
+            
+            .workshop-card {
+                padding: 0.5rem !important;
+                gap: 0.25rem !important;
+            }
+            .workshop-header { margin-bottom: 0 !important; }
+            .workshop-rating { margin-bottom: 0.1rem !important; font-size: 0.8rem !important; }
+            .workshop-title { font-size: 1.05rem !important; margin: 0 !important; line-height: 1.2 !important; }
+            .workshop-attributes { gap: 0 !important; margin-bottom: 0 !important; }
+            .workshop-attr { padding: 0.1rem 0 !important; font-size: 0.75rem !important; }
+            .workshop-actions { margin-top: 0.25rem !important; gap: 0.25rem !important; }
+            .workshop-actions button { padding: 0.25rem !important; font-size: 0.75rem !important; }
+        }
+    </style>
 </head>
+
 <body>
     <!-- Notificaciones Globales -->
     <div id="notification-banner" class="notification hidden"></div>
 
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo" id="nav-logo" style="color: #10b981;">TallerSeguro 🛡️</div>
+            <div class="logo" id="nav-logo" style="color: #10b981; white-space: nowrap; flex-shrink: 0; font-size: clamp(1rem, 4vw, 1.5rem);">TallerSeguro 🛡️</div>
             
-            <div class="nav-links hidden-mobile">
-                <a href="#">Asistente IA</a>
-            </div>
-
             <div class="auth-controls" id="auth-controls">
-                <a href="#" id="btn-role-owner-nav" class="nav-link-subtle">Soy Taller</a>
-                <a href="#" id="btn-show-login" class="nav-link-subtle">Iniciar Sesión</a>
+                <button id="btn-soy-taller" class="btn btn-secondary" style="margin-right: 1rem; border: none; background: transparent; padding: 0.5rem 1rem;">Soy Taller</button>
                 <button id="btn-quiero-probarlo" class="btn btn-primary">Quiero probarlo</button>
                 
                 <div id="user-info" class="hidden">
@@ -41,7 +58,6 @@
                 
                 <div class="hero-buttons">
                     <button class="btn btn-primary btn-large" id="btn-probar-piloto">Probar gratis el piloto</button>
-                    <button class="btn btn-secondary btn-large" id="btn-probar-ia">Probar asistente IA &rarr;</button>
                 </div>
                 
                 <div class="stats-row">
@@ -185,24 +201,52 @@
         <!-- 2. PANEL DEL CLIENTE (USUARIO FINAL) -->
         <section id="view-user-dashboard" class="view-section hidden">
             <div class="dashboard-header">
-                <div>
-                    <button class="btn btn-secondary btn-small" style="margin-bottom: 0.5rem;" onclick="switchView('landing')">&larr; Volver al Inicio</button>
-                    <h2 style="margin: 0;">Panel de Cliente</h2>
-                </div>
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="tab-talleres">Buscar Talleres</button>
-                    <button class="tab-btn" data-tab="tab-mis-reservas">Mis Reservas</button>
-                    <button class="tab-btn" data-tab="tab-mi-auto">Mi auto</button>
+                <nav class="top-nav">
+                    <button class="nav-item active" data-tab="tab-home-app">🏠 Inicio</button>
+                    <button class="nav-item" data-tab="tab-mis-reservas">📅 Reservas</button>
+                    
+                    <button class="nav-item" data-tab="tab-perfil">👤 Mi Perfil</button>
+                </nav>
+            </div>
+
+            <!-- HOME DE LA APP -->
+            <div id="tab-home-app" class="tab-content active">
+                <h3 style="text-align: center; margin-bottom: 2rem;">¿En qué te podemos ayudar hoy?</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div class="card hoverable-card" style="text-align: center; cursor: pointer; padding: 3rem 1.5rem;" onclick="switchTab('tab-talleres')">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🏢</span>
+                        <h3>Buscar Talleres</h3>
+                        <p class="text-muted" style="font-size: 0.9rem; margin-top: 0.5rem;">Explora el listado completo de talleres, filtra por especialidad o ubicación.</p>
+                    </div>
+                    <div class="card hoverable-card" style="text-align: center; cursor: pointer; padding: 3rem 1.5rem;" onclick="switchTab('tab-servicios')">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🔧</span>
+                        <h3>Buscar por Servicios</h3>
+                        <p class="text-muted" style="font-size: 0.9rem; margin-top: 0.5rem;">Encuentra qué talleres ofrecen un servicio específico y compara sus precios.</p>
+                    </div>
+                    <div class="card hoverable-card" style="text-align: center; cursor: pointer; padding: 3rem 1.5rem; border: 2px solid var(--primary);" onclick="switchTab('tab-asistente')">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🤖</span>
+                        <h3 style="color: var(--primary);">Asistente de Diagnóstico</h3>
+                        <p class="text-muted" style="font-size: 0.9rem; margin-top: 0.5rem;">Responde algunas preguntas para identificar tu problema y encontrar el taller ideal.</p>
+                    </div>
                 </div>
             </div>
 
-            <div id="tab-talleres" class="tab-content active">
+            <!-- TAB TALLERES (EXISTENTE) -->
+            <div id="tab-talleres" class="tab-content hidden">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                    <h3>Talleres Disponibles</h3>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 1rem; width: 100%; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <button class="btn btn-secondary btn-small" onclick="switchTab('tab-home-app')" style="padding: 0.3rem 0.6rem; border-radius: 0.5rem;" title="Volver al inicio">&larr;</button>
+                            <h3 style="margin: 0;">Talleres Disponibles</h3>
+                        </div>
+                        <button id="btn-toggle-mobile-filters" class="btn btn-secondary btn-small mobile-only" style="display: none;">Filtros ▾</button>
+                    </div>
+                    <div id="talleres-filters-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap; width: 100%;" class="mobile-filters-hidden">
                         <select id="sort-talleres" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
                             <option value="default">Orden por Defecto</option>
                             <option value="rating">Mejor Calificados</option>
+                            <option value="precio_asc">Precio: Menor a Mayor</option>
+                            <option value="precio_desc">Precio: Mayor a Menor</option>
                         </select>
                         <select id="filter-especialidad" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
                             <option value="">Todos los servicios</option>
@@ -244,30 +288,164 @@
                 </div>
             </div>
 
+            <!-- TAB SERVICIOS (NUEVO) -->
+            <div id="tab-servicios" class="tab-content hidden">
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <button class="btn btn-secondary btn-small" onclick="switchTab('tab-home-app')" style="padding: 0.3rem 0.6rem; border-radius: 0.5rem;" title="Volver al inicio">&larr;</button>
+                        <h3 style="margin: 0;">Búsqueda por Servicios</h3>
+                    </div>
+                    <div class="services-filter-container" id="services-filter-container">
+                        <button class="btn-service-filter" data-service="Mecánica General">Mecánica General</button>
+                        <button class="btn-service-filter" data-service="Frenos">Frenos</button>
+                        <button class="btn-service-filter" data-service="Suspensión y Dirección">Suspensión y Dirección</button>
+                        <button class="btn-service-filter" data-service="Electromecánica">Electromecánica</button>
+                        <button class="btn-service-filter" data-service="Desabolladura y Pintura">Desabolladura y Pintura</button>
+                        <button class="btn-service-filter" data-service="Transmisión">Transmisión</button>
+                        <button class="btn-service-filter" data-service="Cambio de Aceite y Filtros">Cambio de Aceite y Filtros</button>
+                    </div>
+                </div>
+                
+                    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 1rem; width: 100%;">
+                        <button id="btn-toggle-mobile-filters-servicios" class="btn btn-secondary btn-small mobile-only" style="display: none;">Filtros ▾</button>
+                    </div>
+                    <div id="servicios-filters-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap; width: 100%; margin-bottom: 1rem;" class="mobile-filters-hidden">
+                        <select id="sort-servicios" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); flex: 1; min-width: 200px;">
+                            <option value="default">Orden por Defecto</option>
+                            <option value="rating">Mejor Calificados</option>
+                            <option value="precio_asc">Precio: Menor a Mayor</option>
+                            <option value="precio_desc">Precio: Mayor a Menor</option>
+                        </select>
+                        <select id="filter-sector-servicios" style="padding: 0.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); flex: 1; min-width: 200px;">
+                            <option value="">Todos los sectores</option>
+                            <option value="Estación Central">Estación Central</option>
+                            <option value="Huechuraba">Huechuraba</option>
+                            <option value="Independencia">Independencia</option>
+                            <option value="La Florida">La Florida</option>
+                            <option value="La Reina">La Reina</option>
+                            <option value="Las Condes">Las Condes</option>
+                            <option value="Lo Barnechea">Lo Barnechea</option>
+                            <option value="Macul">Macul</option>
+                            <option value="Maipú">Maipú</option>
+                            <option value="Peñalolén">Peñalolén</option>
+                            <option value="Providencia">Providencia</option>
+                            <option value="Puente Alto">Puente Alto</option>
+                            <option value="Quilicura">Quilicura</option>
+                            <option value="Recoleta">Recoleta</option>
+                            <option value="San Miguel">San Miguel</option>
+                            <option value="Santiago Centro">Santiago Centro</option>
+                            <option value="Vitacura">Vitacura</option>
+                            <option value="Ñuñoa">Ñuñoa</option>
+                        </select>
+                        <button id="btn-clear-filters-servicios" class="btn btn-secondary btn-small" style="padding: 0.5rem 1rem; width: 100%;" title="Limpiar Filtros">✖ Limpiar Filtros</button>
+                    </div>
+
+                <div id="servicios-talleres-list" class="grid-list">
+                    <p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1 / -1; margin-top: 2rem;">Selecciona un servicio arriba para ver los talleres que lo ofrecen.</p>
+                </div>
+            </div>
+
+            <!-- TAB ASISTENTE (NUEVO) -->
+            <div id="tab-asistente" class="tab-content hidden">
+                <div class="card" style="max-width: 800px; margin: 0 auto; min-height: 400px; display: flex; flex-direction: column;">
+                    <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-secondary btn-small" onclick="window.goBackAssistant()" style="padding: 0.3rem 0.6rem; border-radius: 0.5rem;" title="Volver">&larr;</button>
+                        <span style="font-size: 2rem;">🤖</span>
+                        <div>
+                            <h3 style="margin: 0; color: var(--primary);">Asistente Mecánico</h3>
+                            <p class="text-muted" style="margin: 0; font-size: 0.9rem;">Te ayudaré a encontrar el problema y el especialista adecuado.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="assistant-chat-container" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 2rem;">
+                        <h2 id="assistant-question" style="font-size: 1.5rem; line-height: 1.4;">Cargando asistente...</h2>
+                        <div id="assistant-options" style="display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 500px;">
+                            <!-- Opciones insertadas por JS -->
+                        </div>
+                    </div>
+                    
+                    <div id="assistant-result-container" class="hidden" style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.5rem;">
+                        <div id="assistant-result-icon" style="font-size: 4rem; margin-bottom: -1rem;">💡</div>
+                        <h2 id="assistant-result-title" style="color: var(--primary);">Diagnóstico Sugerido</h2>
+                        <p id="assistant-result-text" style="font-size: 1.1rem; max-width: 600px; line-height: 1.6;">...</p>
+                        
+                        <div id="assistant-fallback-input" class="hidden" style="width: 100%; max-width: 500px; margin-top: 1rem;">
+                            <textarea id="assistant-custom-problem" rows="3" placeholder="Describe brevemente el problema de tu auto..." style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem;"></textarea>
+                            <button class="btn btn-primary" id="btn-submit-custom-problem" style="width: 100%;">Buscar talleres de Mecánica General</button>
+                        </div>
+
+                        <div id="assistant-suggested-talleres" style="width: 100%; text-align: left; margin-top: 2rem;" class="hidden">
+                            <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Talleres recomendados para ti:</h3>
+                            <div id="assistant-talleres-list" class="grid-list">
+                                <!-- Talleres inyectados por JS -->
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-secondary btn-small" id="btn-restart-assistant" style="margin-top: 2rem;">↻ Empezar de nuevo</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="tab-mis-reservas" class="tab-content hidden">
-                <h3>Mis Reservas y Órdenes Activas</h3>
                 <div id="reservas-list" class="grid-list">
                     <!-- Cards de reservas insertadas por JS -->
                 </div>
             </div>
 
-            <div id="tab-mi-auto" class="tab-content hidden">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3>Mis Vehículos Guardados</h3>
-                    <button class="btn btn-primary btn-small" id="btn-open-add-vehiculo">+ Añadir Vehículo</button>
-                </div>
-                <div id="vehiculos-list" class="grid-list" style="margin-top: 1rem;">
-                    <!-- Cards de vehiculos insertadas por JS -->
-                    <p style="color: var(--text-muted);">Cargando vehículos...</p>
+
+
+            <!-- TAB PERFIL (NUEVO) -->
+            <div id="tab-perfil" class="tab-content hidden">
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profile-avatar-initial">U</div>
+                        <div>
+                            <h2 id="profile-name" style="margin-bottom: 0.25rem;">Cargando...</h2>
+                            <p id="profile-email" class="text-muted">cargando@email.com</p>
+                        </div>
+                    </div>
+                    
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; margin-top: 2rem;">
+                        <h2>🚗 Mi Garage</h2>
+                        <button class="btn btn-primary btn-small" id="btn-open-add-vehiculo">+ Añadir Vehículo</button>
+                    </div>
+                    <div id="vehiculos-list" class="grid-list" style="margin-top: 1rem; margin-bottom: 2rem;">
+                        <!-- Cards de vehiculos insertadas por JS -->
+                        <p style="color: var(--text-muted);">Cargando vehículos...</p>
+                    </div>
+
+                    
+                    
+                    
+                    <button class="btn btn-secondary" id="btn-logout-profile" style="color: var(--error); border-color: var(--error); margin-top: 1rem; width: 100%;">
+                        Cerrar Sesión
+                    </button>
                 </div>
             </div>
+
+            <!-- BOTTOM NAVIGATION (MÓVIL) -->
+            <nav class="bottom-nav">
+                <button class="bottom-nav-item active" data-tab="tab-home-app">
+                    <span class="icon">🏠</span>
+                    <span>Inicio</span>
+                </button>
+                <button class="bottom-nav-item" data-tab="tab-mis-reservas">
+                    <span class="icon">📅</span>
+                    <span>Reservas</span>
+                </button>
+
+                <button class="bottom-nav-item" data-tab="tab-perfil">
+                    <span class="icon">👤</span>
+                    <span>Perfil</span>
+                </button>
+            </nav>
         </section>
 
         <!-- 3. PANEL DEL DUEÑO DE TALLER -->
         <section id="view-owner-dashboard" class="view-section hidden">
             <div class="dashboard-header">
                 <div>
-                    <button class="btn btn-secondary btn-small" style="margin-bottom: 0.5rem;" onclick="switchView('landing')">&larr; Volver al Inicio</button>
                     <h2 style="margin: 0;">Panel de Taller</h2>
                 </div>
                 <div class="tabs">
@@ -348,7 +526,14 @@
                 <div id="booking-servicios-container" style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
                     <p style="color: var(--text-muted); font-size: 0.9rem;">Cargando servicios...</p>
                 </div>
-                <input type="datetime-local" id="booking-date" required step="900">
+                <h4 style="margin-bottom: 0.5rem;">Fecha de Atención</h4>
+                <input type="date" id="booking-date-only" required style="width: 100%; margin-bottom: 1rem; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                
+                <h4 style="margin-bottom: 0.5rem;">Hora Disponible</h4>
+                <input type="hidden" id="booking-time-only" required>
+                <div id="booking-time-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
+                    <!-- Se llenará con JS -->
+                </div>
                 <textarea id="booking-notes" placeholder="Deja algun comentario (Opcional)"></textarea>
                 <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
             </form>
@@ -427,8 +612,8 @@
                 
                 <h4 style="margin-bottom: 0.5rem;">Tiempo Estimado</h4>
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                    <input type="number" id="add-servicio-tiempo-valor" placeholder="Ej. 2" required min="1" style="margin-bottom: 0;">
-                    <select id="add-servicio-tiempo-unidad" required style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    <input type="number" id="add-servicio-tiempo-valor" placeholder="Ej. 2" required min="1" style="margin-bottom: 0; flex: 1; min-width: 0;">
+                    <select id="add-servicio-tiempo-unidad" required style="flex: 1; min-width: 0; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
                         <option value="Minutos">Minutos</option>
                         <option value="Horas" selected>Horas</option>
                         <option value="Días">Días</option>
@@ -493,6 +678,18 @@
         </div>
     </div>
 
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="./main.js?v=21"></script>
+
+    <!-- MODAL DE HISTORIAL DEL VEHICULO -->
+    <div id="vehicle-history-modal" class="modal hidden">
+        <div class="modal-content card" style="max-width: 600px;">
+            <span class="close-btn" id="close-vehicle-history-modal">&times;</span>
+            <h2 id="history-modal-title">Historial de Servicios</h2>
+            <div id="vehicle-history-list" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Historial inyectado por JS -->
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

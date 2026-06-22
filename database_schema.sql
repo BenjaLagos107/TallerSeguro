@@ -18,8 +18,7 @@ CREATE TABLE public.talleres (
     dueno_id UUID NOT NULL REFERENCES public.usuarios(id) ON DELETE CASCADE,
     nombre TEXT NOT NULL,
     direccion TEXT NOT NULL,
-    latitud NUMERIC,
-    longitud NUMERIC,
+    sector TEXT, -- Reemplaza latitud y longitud
     rango_precios TEXT,
     especialidades TEXT, -- Puede ser un JSONB o TEXT separado por comas
     telefono TEXT,
@@ -81,3 +80,7 @@ CREATE POLICY "Permitir todo a talleres" ON public.talleres FOR ALL USING (true)
 CREATE POLICY "Permitir todo a vehiculos" ON public.vehiculos FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Permitir todo a ordenes" ON public.ordenes_trabajo FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Permitir todo a resenas" ON public.resenas FOR ALL USING (true) WITH CHECK (true);
+
+-- 6. Políticas adicionales
+ALTER TABLE public.taller_servicios ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Permitir todo a taller_servicios" ON public.taller_servicios FOR ALL USING (true) WITH CHECK (true);

@@ -682,7 +682,8 @@ async function loadUserDashboard() {
 
     // Cargar Mis Reservas
     try {
-        const reservas = await getMisReservas(currentUser.id);
+        const userId = currentUser ? currentUser.id : null;
+        const reservas = await getMisReservas(userId);
         const grid = document.getElementById('reservas-list');
         if (grid) {
             grid.innerHTML = '';
@@ -732,7 +733,8 @@ async function loadUserDashboard() {
 
     // Cargar Vehículos (Mi Auto)
     try {
-        window.userVehicles = await getVehiculos(currentUser.id);
+        const userId = currentUser ? currentUser.id : null;
+        window.userVehicles = await getVehiculos(userId);
         const gridVehiculos = document.getElementById('vehiculos-list');
         if (gridVehiculos) {
             gridVehiculos.innerHTML = '';

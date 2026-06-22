@@ -1366,7 +1366,11 @@ window.renderAssistantNode = function(nodeId, isBack = false) {
             audioBtn.title = 'Escuchar sonido de ejemplo';
             audioBtn.onclick = (e) => {
                 e.stopPropagation();
-                new Audio(opt.audio).play();
+                const audio = new Audio(opt.audio);
+                audio.play().catch(err => {
+                    console.error("Error reproduciendo audio:", err);
+                    alert("No se pudo reproducir el sonido. Revisa si tu dispositivo está en silencio o tiene el volumen bajo. (" + err.message + ")");
+                });
             };
             wrapper.appendChild(audioBtn);
         }

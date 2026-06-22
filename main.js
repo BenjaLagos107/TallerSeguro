@@ -1133,18 +1133,20 @@ function renderKanbanBoard(boardElement, ordenes) {
         const leftTitle = o.estado === 'Pendiente' ? 'Rechazar / Cancelar' : 'Retroceder';
         const rightIcon = '&rarr;';
 
+        card.classList.add('hoverable-card');
+        card.style.cursor = 'pointer';
+        card.onclick = () => window.openOrderDetailsModal(o);
+
         card.innerHTML = `
-            <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem; margin-bottom: 0.25rem;">${o.servicio_solicitado || 'Servicio Personalizado'}</p>
-            <p style="margin-bottom: 0.5rem;"><strong>Precio:</strong> ${o.precio_acordado ? '$' + o.precio_acordado : 'A convenir'}</p>
-            <p><strong>Auto:</strong> ${o.vehiculos?.marca} ${o.vehiculos?.modelo} (${o.vehiculos?.patente})</p>
-            <p><strong>Cliente:</strong> ${o.vehiculos?.usuarios?.nombre || 'Desconocido'}</p>
-            <p><strong>Fecha:</strong> ${new Date(o.fecha_ingreso).toLocaleString()}</p>
-            <hr style="border-color:rgba(255,255,255,0.1); margin:0.5rem 0;">
-            <p class="text-muted" style="font-size:0.9rem">${o.observaciones}</p>
-            <div style="margin-top:1rem; display:flex; justify-content: space-between; align-items: center;">
-                <button class="btn btn-secondary btn-small" onclick="reverseOrder('${o.id}', '${o.estado}')" ${leftDisabled} title="${leftTitle}">${leftIcon}</button>
-                <span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-light); font-size: 0.7rem;">${o.estado}</span>
-                <button class="btn btn-secondary btn-small" onclick="advanceOrder('${o.id}', '${o.estado}')" ${rightDisabled} title="Avanzar etapa">${rightIcon}</button>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                <p style="color: var(--primary-color); font-weight: bold; font-size: 1rem; margin: 0; flex: 1; padding-right: 0.5rem;">${o.servicio_solicitado || 'Servicio Personalizado'}</p>
+                <span style="background: rgba(255,255,255,0.1); padding: 0.2rem 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.85rem; font-weight: bold; white-space: nowrap;">${o.vehiculos?.patente || 'N/A'}</span>
+            </div>
+            <p class="text-muted" style="font-size:0.85rem; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${o.observaciones || 'Sin observaciones'}</p>
+            <div style="display:flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.8rem;">
+                <button class="btn btn-secondary" style="font-size: 1.3rem; width: 45px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); reverseOrder('${o.id}', '${o.estado}')" ${leftDisabled} title="${leftTitle}">${leftIcon}</button>
+                <span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-light); font-size: 0.75rem;">${o.estado}</span>
+                <button class="btn btn-secondary" style="font-size: 1.3rem; width: 45px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); advanceOrder('${o.id}', '${o.estado}')" ${rightDisabled} title="Avanzar etapa">${rightIcon}</button>
             </div>
         `;
 
@@ -1727,3 +1729,27 @@ document.getElementById('btn-toggle-mobile-filters')?.addEventListener('click', 
         this.textContent = 'Filtros ▾';
     }
 });
+
+window.openOrderDetailsModal = (o) => {
+    const content = document.getElementById('order-detail-content');
+    content.innerHTML = `
+        <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--primary);">Servicio Solicitado:</strong></p>
+            <p style="font-size: 1.1rem; font-weight: 500; margin-bottom: 1rem;">${o.servicio_solicitado || 'Servicio Personalizado'}</p>
+            
+            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--primary);">Cliente y Vehículo:</strong></p>
+            <p style="margin-bottom: 0.2rem;">👤 ${o.vehiculos?.usuarios?.nombre || 'Desconocido'}</p>
+            <p style="margin-bottom: 1rem;">🚗 ${o.vehiculos?.marca} ${o.vehiculos?.modelo} <span style="background: rgba(255,255,255,0.1); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: monospace;">${o.vehiculos?.patente}</span></p>
+
+            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--primary);">Detalles Financieros y Tiempo:</strong></p>
+            <p style="margin-bottom: 0.2rem;">💰 Precio: <strong>${o.precio_acordado ? '$' + Number(o.precio_acordado).toLocaleString('es-CL') : 'A convenir'}</strong></p>
+            <p style="margin-bottom: 1rem;">📅 Ingreso: ${new Date(o.fecha_ingreso).toLocaleString()}</p>
+
+            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--primary);">Observaciones del cliente:</strong></p>
+            <div style="background: rgba(0,0,0,0.2); padding: 0.8rem; border-radius: 6px; font-size: 0.95rem; color: var(--text-light); line-height: 1.4;">
+                ${o.observaciones || 'Sin observaciones adicionales.'}
+            </div>
+        </div>
+    `;
+    document.getElementById('modal-view-order').classList.remove('hidden');
+};

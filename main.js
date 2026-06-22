@@ -684,45 +684,53 @@ async function loadUserDashboard() {
     try {
         const reservas = await getMisReservas(currentUser.id);
         const grid = document.getElementById('reservas-list');
-        grid.innerHTML = '';
-        if (reservas.length === 0) {
-            grid.innerHTML = `
-                <div style="text-align: center; padding: 3rem 1rem; width: 100%; grid-column: 1 / -1; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
-                    <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 1.1rem;">Aún no tienes reservas activas.</p>
-                    <button class="btn btn-primary" onclick="switchTab('tab-home-app')">Buscar Servicios</button>
-                </div>
-            `;
-        } else {
-            reservas.forEach(r => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                let statusClass = 'status-pendiente';
-                if (r.estado === 'Cancelado') statusClass = 'status-error';
-                else if (r.estado === 'Aceptado') statusClass = 'status-primary';
-                else if (r.estado === 'En Revisión') statusClass = 'status-revision';
-                else if (r.estado === 'Terminado' || r.estado === 'Entregado') statusClass = 'status-listo';
-                
-                let reviewBtn = '';
-                if (r.estado === 'Entregado' && !r.tiene_resena) {
-                    reviewBtn = `<button class="btn btn-primary btn-small" style="margin-top:1rem; width:100%" onclick="openAddResenaModal('${r.id}', '${r.taller_id}')">Dejar Reseña ⭐</button>`;
-                } else if (r.estado === 'Entregado' && r.tiene_resena) {
-                    reviewBtn = `<p class="text-muted" style="margin-top:1rem; font-size:0.9rem; text-align:center;">Ya dejaste una reseña ✅</p>`;
-                }
-
-                card.innerHTML = `
-                    <h4>Taller: ${r.talleres ? r.talleres.nombre : 'Desconocido'}</h4>
-                    <p><strong>Auto:</strong> ${r.vehiculo ? r.vehiculo.marca + ' ' + r.vehiculo.modelo + ' (' + r.vehiculo.patente + ')' : 'N/A'}</p>
-                    <p><strong>Ingreso:</strong> ${new Date(r.fecha_ingreso).toLocaleString()}</p>
-                    <p><strong>Notas:</strong> ${r.observaciones}</p>
-                    <div style="margin-top:1rem;">
-                        <span class="status-badge ${statusClass}">${r.estado}</span>
+        if (grid) {
+            grid.innerHTML = '';
+            if (reservas.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 3rem 1rem; width: 100%; grid-column: 1 / -1; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
+                        <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 1.1rem;">Aún no tienes reservas activas.</p>
+                        <button class="btn btn-primary" onclick="switchTab('tab-home-app')">Buscar Servicios</button>
                     </div>
-                    ${reviewBtn}
                 `;
-                grid.appendChild(card);
-            });
+            } else {
+                reservas.forEach(r => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    let statusClass = 'status-pendiente';
+                    if (r.estado === 'Cancelado') statusClass = 'status-error';
+                    else if (r.estado === 'Aceptado') statusClass = 'status-primary';
+                    else if (r.estado === 'En Revisión') statusClass = 'status-revision';
+                    else if (r.estado === 'Terminado' || r.estado === 'Entregado') statusClass = 'status-listo';
+                    
+                    let reviewBtn = '';
+                    if (r.estado === 'Entregado' && !r.tiene_resena) {
+                        reviewBtn = `<button class="btn btn-primary btn-small" style="margin-top:1rem; width:100%" onclick="openAddResenaModal('${r.id}', '${r.taller_id}')">Dejar Reseña ⭐</button>`;
+                    } else if (r.estado === 'Entregado' && r.tiene_resena) {
+                        reviewBtn = `<p class="text-muted" style="margin-top:1rem; font-size:0.9rem; text-align:center;">Ya dejaste una reseña ✅</p>`;
+                    }
+
+                    card.innerHTML = `
+                        <h4>Taller: ${r.talleres ? r.talleres.nombre : 'Desconocido'}</h4>
+                        <p><strong>Auto:</strong> ${r.vehiculo ? r.vehiculo.marca + ' ' + r.vehiculo.modelo + ' (' + r.vehiculo.patente + ')' : 'N/A'}</p>
+                        <p><strong>Ingreso:</strong> ${new Date(r.fecha_ingreso).toLocaleString()}</p>
+                        <p><strong>Notas:</strong> ${r.observaciones}</p>
+                        <div style="margin-top:1rem;">
+                            <span class="status-badge ${statusClass}">${r.estado}</span>
+                        </div>
+                        ${reviewBtn}
+                    `;
+                    grid.appendChild(card);
+                });
+            }
         }
-        // Cargar Vehículos (Mi Auto)
+    } catch (e) {
+        console.error('Error cargando reservas:', e);
+        const grid = document.getElementById('reservas-list');
+        if (grid) grid.innerHTML = '<p class="text-error">Error al cargar reservas.</p>';
+    }
+
+    // Cargar Vehículos (Mi Auto)
     try {
         window.userVehicles = await getVehiculos(currentUser.id);
         const gridVehiculos = document.getElementById('vehiculos-list');
@@ -730,11 +738,11 @@ async function loadUserDashboard() {
             gridVehiculos.innerHTML = '';
             if (window.userVehicles.length === 0) {
                 gridVehiculos.innerHTML = `
-                <div style="text-align: center; padding: 2rem 1rem; width: 100%; grid-column: 1 / -1; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
-                    <p style="color: var(--text-muted); margin-bottom: 1rem;">No tienes vehículos registrados en tu garage.</p>
-                    <button class="btn btn-primary btn-small" onclick="document.getElementById('modal-add-vehiculo').classList.remove('hidden')">+ Añadir mi primer vehículo</button>
-                </div>
-            `;
+                    <div style="text-align: center; padding: 2rem 1rem; width: 100%; grid-column: 1 / -1; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">No tienes vehículos registrados en tu garage.</p>
+                        <button class="btn btn-primary btn-small" onclick="document.getElementById('modal-add-vehiculo').classList.remove('hidden')">+ Añadir mi primer vehículo</button>
+                    </div>
+                `;
             } else {
                 window.userVehicles.forEach(v => {
                     const card = document.createElement('div');
@@ -753,9 +761,8 @@ async function loadUserDashboard() {
         }
     } catch (e) {
         console.error('Error cargando vehículos:', e);
-    }
-} catch (e) {
-        console.error(e);
+        const gridVehiculos = document.getElementById('vehiculos-list');
+        if (gridVehiculos) gridVehiculos.innerHTML = '<p class="text-error">Error al cargar vehículos.</p>';
     }
 }
 

@@ -38,18 +38,6 @@ export async function addVehiculo(userId, formData) {
 
 export async function getMisReservas(userId) {
     if (!userId) return [];
-    const { data, error } = await supabase
-        .from('ordenes_trabajo')
-        .select(`
-            *,
-            talleres ( nombre ),
-            vehiculos ( marca, modelo, patente )
-        `)
-        .eq('vehiculos.usuario_id', userId); 
-        // En supabase si filtramos por relación a veces es complejo,
-        // Mejor hacemos un select con inner join:
-        // .eq('vehiculo_id.usuario_id', userId) -> requiere configuración.
-    
     // Alternativa más simple para el MVP: traer vehículos del usuario y luego órdenes
     const { data: vehiculos, error: vError } = await supabase
         .from('vehiculos')

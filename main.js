@@ -686,7 +686,12 @@ async function loadUserDashboard() {
         const grid = document.getElementById('reservas-list');
         grid.innerHTML = '';
         if (reservas.length === 0) {
-            grid.innerHTML = '<p>No tienes reservas activas.</p>';
+            grid.innerHTML = `
+                <div style="text-align: center; padding: 3rem 1rem; width: 100%; grid-column: 1 / -1; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
+                    <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 1.1rem;">Aún no tienes reservas activas.</p>
+                    <button class="btn btn-primary" onclick="switchTab('tab-home-app')">Buscar Servicios</button>
+                </div>
+            `;
         } else {
             reservas.forEach(r => {
                 const card = document.createElement('div');
@@ -724,7 +729,12 @@ async function loadUserDashboard() {
         if (gridVehiculos) {
             gridVehiculos.innerHTML = '';
             if (window.userVehicles.length === 0) {
-                gridVehiculos.innerHTML = '<p>Aún no tienes vehículos guardados. Se guardarán automáticamente cuando hagas una reserva.</p>';
+                gridVehiculos.innerHTML = `
+                <div style="text-align: center; padding: 2rem 1rem; width: 100%; grid-column: 1 / -1; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">No tienes vehículos registrados en tu garage.</p>
+                    <button class="btn btn-primary btn-small" onclick="document.getElementById('modal-add-vehiculo').classList.remove('hidden')">+ Añadir mi primer vehículo</button>
+                </div>
+            `;
             } else {
                 window.userVehicles.forEach(v => {
                     const card = document.createElement('div');

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TallerSeguro</title>
-    <link rel="stylesheet" href="./style.css?v=21">
+    <link rel="stylesheet" href="./style.css?v=22">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 
     <style>
@@ -370,7 +370,7 @@
                         <p id="assistant-result-text" style="font-size: 1.1rem; max-width: 600px; line-height: 1.6;">...</p>
                         
                         <div id="assistant-fallback-input" class="hidden" style="width: 100%; max-width: 500px; margin-top: 1rem;">
-                            <textarea id="assistant-custom-problem" rows="3" placeholder="Describe brevemente el problema de tu auto..." style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem;"></textarea>
+                            <textarea id="assistant-custom-problem" rows="3" placeholder="Describe brevemente el problema de tu auto..." style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem;" maxlength="500"></textarea>
                             <button class="btn btn-primary" id="btn-submit-custom-problem" style="width: 100%;">Buscar talleres de Mecánica General</button>
                         </div>
 
@@ -482,10 +482,10 @@
             <span class="close-btn" id="close-auth-modal">&times;</span>
             <h2 id="auth-title">Iniciar Sesión</h2>
             <form id="auth-form">
-                <input type="email" id="auth-email" placeholder="Correo electrónico" required>
-                <input type="password" id="auth-password" placeholder="Contraseña" required>
+                <input type="email" id="auth-email" placeholder="Correo electrónico" required maxlength="100">
+                <input type="password" id="auth-password" placeholder="Contraseña" required maxlength="100">
                 <!-- Solo para registro -->
-                <input type="text" id="auth-name" placeholder="Tu Nombre Completo" class="hidden">
+                <input type="text" id="auth-name" placeholder="Tu Nombre Completo" class="hidden" maxlength="100">
                 <p id="auth-error" style="color: var(--error); text-align: center; font-size: 0.9rem; font-weight: 600;" class="hidden"></p>
                 <button type="submit" class="btn btn-primary" id="auth-submit-btn">Entrar</button>
             </form>
@@ -506,9 +506,9 @@
                 
                 <div id="booking-guest-fields" class="hidden" style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
                     <h4>Crea tu cuenta para gestionar la reserva</h4>
-                    <input type="text" id="booking-nombre" placeholder="Tu Nombre Completo">
-                    <input type="email" id="booking-email" placeholder="Tu Correo Electrónico">
-                    <input type="password" id="booking-password" placeholder="Crea una contraseña">
+                    <input type="text" id="booking-nombre" placeholder="Tu Nombre Completo" maxlength="100">
+                    <input type="email" id="booking-email" placeholder="Tu Correo Electrónico" maxlength="100">
+                    <input type="password" id="booking-password" placeholder="Crea una contraseña" maxlength="100">
                 </div>
 
                 <h4>Datos de tu Vehículo</h4>
@@ -517,10 +517,10 @@
                         <option value="new">Ingresar nuevo vehículo...</option>
                     </select>
                 </div>
-                <input type="text" id="booking-marca" placeholder="Marca (ej. Toyota)" required>
-                <input type="text" id="booking-modelo" placeholder="Modelo (ej. Yaris)" required>
-                <input type="text" id="booking-patente" placeholder="Patente" required>
-                <input type="text" inputmode="numeric" id="booking-km" placeholder="Kilometraje aproximado">
+                <input type="text" id="booking-marca" placeholder="Marca (ej. Toyota)" required maxlength="50">
+                <input type="text" id="booking-modelo" placeholder="Modelo (ej. Yaris)" required maxlength="50">
+                <input type="text" id="booking-patente" placeholder="Patente" required maxlength="10">
+                <input type="text" inputmode="numeric" id="booking-km" placeholder="Kilometraje aproximado" maxlength="7">
                 
                 <h4>Detalles de la Reserva</h4>
                 <div id="booking-servicios-container" style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
@@ -534,7 +534,7 @@
                 <div id="booking-time-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
                     <!-- Se llenará con JS -->
                 </div>
-                <textarea id="booking-notes" placeholder="Deja algun comentario (Opcional)"></textarea>
+                <textarea id="booking-notes" placeholder="Deja algun comentario (Opcional)" maxlength="500"></textarea>
                 <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
             </form>
         </div>
@@ -546,8 +546,8 @@
             <span class="close-btn" id="close-add-taller-modal">&times;</span>
             <h2>Inscribir Nuevo Taller</h2>
             <form id="form-add-taller">
-                <input type="text" id="add-taller-nombre" placeholder="Nombre del Taller" required>
-                <input type="text" id="add-taller-direccion" placeholder="Dirección (ej. Av. Providencia 1234)" required>
+                <input type="text" id="add-taller-nombre" placeholder="Nombre del Taller" required maxlength="100">
+                <input type="text" id="add-taller-direccion" placeholder="Dirección (ej. Av. Providencia 1234)" required maxlength="200">
                 
                 <select id="add-taller-sector" required style="margin-bottom: 1rem; width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
                     <option value="" disabled selected>Selecciona el Sector / Comuna...</option>
@@ -570,7 +570,7 @@
                     <option value="Vitacura">Vitacura</option>
                     <option value="Ñuñoa">Ñuñoa</option>
                 </select>
-                <input type="text" id="add-taller-telefono" placeholder="Teléfono de contacto">
+                <input type="text" id="add-taller-telefono" placeholder="Teléfono de contacto" maxlength="20">
                 
                 <h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Especialidades</h4>
                 <div class="checkbox-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
@@ -608,11 +608,11 @@
                 </select>
 
                 <h4 style="margin-bottom: 0.5rem;">Precio Estimado (CLP)</h4>
-                <input type="number" id="add-servicio-precio" placeholder="Ej. 45000" required>
+                <input type="number" id="add-servicio-precio" placeholder="Ej. 45000" required max="99999999">
                 
                 <h4 style="margin-bottom: 0.5rem;">Tiempo Estimado</h4>
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                    <input type="number" id="add-servicio-tiempo-valor" placeholder="Ej. 2" required min="1" style="margin-bottom: 0; flex: 1; min-width: 0;">
+                    <input type="number" id="add-servicio-tiempo-valor" placeholder="Ej. 2" required min="1" style="margin-bottom: 0; flex: 1; min-width: 0;" max="999">
                     <select id="add-servicio-tiempo-unidad" required style="flex: 1; min-width: 0; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);">
                         <option value="Minutos">Minutos</option>
                         <option value="Horas" selected>Horas</option>
@@ -645,7 +645,7 @@
                 </select>
 
                 <h4 style="margin-bottom: 0.5rem;">Comentario</h4>
-                <textarea id="add-resena-comentario" placeholder="¿Cómo fue tu experiencia con el taller?" rows="4" style="margin-bottom: 1rem; width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);" required></textarea>
+                <textarea id="add-resena-comentario" placeholder="¿Cómo fue tu experiencia con el taller?" rows="4" style="margin-bottom: 1rem; width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);" required maxlength="500"></textarea>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Reseña</button>
             </form>
@@ -669,16 +669,16 @@
             <span class="close-btn" id="close-add-vehiculo-modal">&times;</span>
             <h2>Añadir Nuevo Vehículo</h2>
             <form id="form-add-vehiculo">
-                <input type="text" id="add-vehiculo-marca" placeholder="Marca (ej. Toyota)" required>
-                <input type="text" id="add-vehiculo-modelo" placeholder="Modelo (ej. Yaris)" required>
-                <input type="text" id="add-vehiculo-patente" placeholder="Patente" required>
-                <input type="text" inputmode="numeric" id="add-vehiculo-km" placeholder="Kilometraje aproximado">
+                <input type="text" id="add-vehiculo-marca" placeholder="Marca (ej. Toyota)" required maxlength="50">
+                <input type="text" id="add-vehiculo-modelo" placeholder="Modelo (ej. Yaris)" required maxlength="50">
+                <input type="text" id="add-vehiculo-patente" placeholder="Patente" required maxlength="10">
+                <input type="text" inputmode="numeric" id="add-vehiculo-km" placeholder="Kilometraje aproximado" maxlength="7">
                 <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Guardar Vehículo</button>
             </form>
         </div>
     </div>
 
-    <script type="module" src="./main.js?v=27"></script>
+    <script type="module" src="./main.js?v=28"></script>
 
     <!-- MODAL DE HISTORIAL DEL VEHICULO -->
     <div id="vehicle-history-modal" class="modal hidden">

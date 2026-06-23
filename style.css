@@ -1035,6 +1035,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     align-items: center !important;
     padding: 0 1rem !important;
   }
+  
+  /* Centrar botones SOLO en Landing Page (mobile) */
+  body:has(#view-landing:not(.hidden)) .nav-container {
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 1rem;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+  body:has(#view-landing:not(.hidden)) .auth-controls {
+    width: 100%;
+    justify-content: center;
+  }
+
   .logo {
     font-size: 1.25rem !important;
   }

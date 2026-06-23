@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TallerSeguro</title>
-    <link rel="stylesheet" href="./style.css?v=28">
+    <link rel="stylesheet" href="./style.css?v=29">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 
     <style>
@@ -609,6 +609,7 @@
 
                 <h4 style="margin-bottom: 0.5rem;">Precio Estimado (CLP)</h4>
                 <input type="number" id="add-servicio-precio" placeholder="Ej. 45000" required max="99999999">
+                <p id="add-servicio-precio-final" style="font-size: 0.85rem; color: #10b981; margin-top: -0.5rem; margin-bottom: 1rem; display: none;">Precio final publicado: <strong>$0</strong> (incluye $6.000 cargo de uso)</p>
                 
                 <h4 style="margin-bottom: 0.5rem;">Tiempo Estimado</h4>
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
@@ -678,7 +679,7 @@
         </div>
     </div>
 
-    <script type="module" src="./main.js?v=34"></script>
+    <script type="module" src="./main.js?v=35"></script>
 
     <!-- MODAL DE HISTORIAL DEL VEHICULO -->
     <div id="vehicle-history-modal" class="modal hidden">

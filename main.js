@@ -453,6 +453,21 @@ function setupEventListeners() {
         }
     });
 
+    const inputPrecioServicio = document.getElementById('add-servicio-precio');
+    const pPrecioFinal = document.getElementById('add-servicio-precio-final');
+    if (inputPrecioServicio && pPrecioFinal) {
+        inputPrecioServicio.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val) && val > 0) {
+                const final = val + 6000;
+                pPrecioFinal.innerHTML = `Precio final publicado: <strong>$${final.toLocaleString('es-CL')}</strong> (incluye $6.000 cargo de uso)`;
+                pPrecioFinal.style.display = 'block';
+            } else {
+                pPrecioFinal.style.display = 'none';
+            }
+        });
+    }
+
     const formAddServicio = document.getElementById('form-add-servicio');
     if (formAddServicio) {
         formAddServicio.addEventListener('submit', async (e) => {
@@ -473,6 +488,8 @@ function setupEventListeners() {
                 showNotification("Servicio agregado exitosamente", "success");
                 document.getElementById('modal-add-servicio').classList.add('hidden');
                 formAddServicio.reset();
+                const pPrecioFinal = document.getElementById('add-servicio-precio-final');
+                if (pPrecioFinal) pPrecioFinal.style.display = 'none';
                 loadOwnerDashboard(); // Recargar para mostrar
             } catch (err) {
                 showNotification("Error agregando servicio: " + err.message, "error");

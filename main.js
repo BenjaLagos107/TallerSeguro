@@ -479,7 +479,7 @@ function setupEventListeners() {
             const payload = {
                 taller_id: tallerId,
                 nombre: document.getElementById('add-servicio-nombre').value,
-                precio_estimado: parseFloat(document.getElementById('add-servicio-precio').value),
+                precio_estimado: parseFloat(document.getElementById('add-servicio-precio').value) + 6000,
                 tiempo_estimado_valor: parseInt(tiempoValor, 10),
                 tiempo_estimado_unidad: tiempoUnidad
             };
